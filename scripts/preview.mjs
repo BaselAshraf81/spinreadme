@@ -7,3 +7,5 @@ const t = { title: "Midnight City", artist: "M83", duration: 243000, progress: 9
 writeFileSync("assets/playing.svg", render(t, cover));
 writeFileSync("assets/idle.svg", render({ ...t, playing: false, live: false, progress: 0 }, cover));
 
+writeFileSync("assets/playing-ice.svg", render(t, cover, "ice"));
+writeFileSync("assets/playing-paper.svg", render(t, cover, "paper"));

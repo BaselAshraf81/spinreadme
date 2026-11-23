@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="495" height="170" viewBox="0 0 495 170" role="img" aria-label="NOW PLAYING: Midnight City by M83">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fbf6ec"/><stop offset="1" stop-color="#ebe1cc"/>
+    </linearGradient>
+    <clipPath id="round"><rect x="20" y="25" width="120" height="120" rx="8"/></clipPath>
+    <radialGradient id="glow" cx="0.2" cy="0.5" r="0.8">
+      <stop offset="0" stop-color="#c2410c" stop-opacity="0.12"/><stop offset="1" stop-color="#c2410c" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <style>
+    text { font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif; }
+    .mono { font-family: 'SF Mono', Consolas, Menlo, monospace; font-size: 10px; }
+    .dim { fill: #9a8878; }
+    .tag { font-size: 10px; font-weight: 600; letter-spacing: 2.4px; fill: #c2410c; }
+    .title { font-size: 19px; font-weight: 700; fill: #2a1e16; }
+    .artist { font-size: 13px; fill: #6b5646; }
+    .spin { transform-origin: 140px 85px; animation: spin 3.2s linear infinite; animation-play-state: running; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .eq { transform-box: fill-box; transform-origin: 50% 100%; transform: scaleY(0.25); }
+    .eq.on { animation: bounce 0.9s ease-in-out infinite alternate; }
+    @keyframes bounce { from { transform: scaleY(0.2); } to { transform: scaleY(1); } }
+    .dot { animation: pulse 1.6s ease-in-out infinite; }
+    @keyframes pulse { 50% { opacity: 0.25; } }
+  </style>
+  <rect width="495" height="170" rx="14" fill="url(#bg)"/>
+  <rect width="495" height="170" rx="14" fill="url(#glow)"/>
+  <rect x="0.5" y="0.5" width="494" height="169" rx="13.5" fill="none" stroke="#cdbfa6"/>
+  <g class="spin">
+    <circle cx="140" cy="85" r="64" fill="#2a211b"/>
+    <circle cx="140" cy="85" r="58" fill="none" stroke="#d9ccb5" stroke-width="1"/>
+    <circle cx="140" cy="85" r="52" fill="none" stroke="#d9ccb5" stroke-width="1"/>
+    <circle cx="140" cy="85" r="46" fill="none" stroke="#d9ccb5" stroke-width="1"/>
+    <circle cx="140" cy="85" r="40" fill="none" stroke="#d9ccb5" stroke-width="1"/>
+    <circle cx="140" cy="85" r="34" fill="none" stroke="#d9ccb5" stroke-width="1"/>
+    <path d="M140 85 L140 21 A64 64 0 0 1 185 40 Z" fill="#fff" opacity="0.05"/>
+    <path d="M140 85 L140 149 A64 64 0 0 1 95 130 Z" fill="#fff" opacity="0.05"/>
+    <circle cx="140" cy="85" r="21" fill="#c2410c"/>
+    <circle cx="140" cy="85" r="15" fill="none" stroke="#9a3412" stroke-width="1"/>
+    <circle cx="140" cy="85" r="3.5" fill="#fbf6ec"/>
+  </g>
+  <image href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMDAiIGhlaWdodD0iMzAwIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImciIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj48c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiNmZjVmNmQiLz48c3RvcCBvZmZzZXQ9IjAuNTUiIHN0b3AtY29sb3I9IiM3YjJmZjciLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiMwZjJiNWIiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjMwMCIgZmlsbD0idXJsKCNnKSIvPjxjaXJjbGUgY3g9IjIxMCIgY3k9IjkwIiByPSI0NSIgZmlsbD0iI2ZmZDA3YSIgb3BhY2l0eT0iMC45Ii8+PHBhdGggZD0iTTAgMjMwIEw3MCAxNTAgTDEzMCAyMTAgTDIwMCAxMzAgTDMwMCAyNDAgTDMwMCAzMDAgTDAgMzAwWiIgZmlsbD0iIzBiMTIzMCIgb3BhY2l0eT0iMC44Ii8+PC9zdmc+" x="20" y="25" width="120" height="120" clip-path="url(#round)" preserveAspectRatio="xMidYMid slice"/>
+  <rect x="20" y="25" width="120" height="120" rx="8" fill="none" stroke="#fff" stroke-opacity="0.08"/>
+  <circle class="dot" cx="219" cy="35" r="3" fill="#c2410c"/>
+  <text x="228" y="39" class="tag">NOW PLAYING</text>
+  <rect class="eq on" x="446" y="24" width="4" height="16" rx="2" fill="#c2410c" style="animation-delay:0s;animation-duration:0.70s"/><rect class="eq on" x="454" y="24" width="4" height="16" rx="2" fill="#c2410c" style="animation-delay:0.17s;animation-duration:0.83s"/><rect class="eq on" x="462" y="24" width="4" height="16" rx="2" fill="#c2410c" style="animation-delay:0.34s;animation-duration:0.96s"/><rect class="eq on" x="470" y="24" width="4" height="16" rx="2" fill="#c2410c" style="animation-delay:0.51s;animation-duration:1.09s"/>
+  <text x="215" y="76" class="title">Midnight City</text>
+  <text x="215" y="98" class="artist">M83</text>
+  <rect x="215" y="124" width="240" height="4" rx="2" fill="#d8cbb4"/>
+       <rect x="215" y="124" width="94.8" height="4" rx="2" fill="#c2410c"><animate attributeName="width" from="94.8" to="240" dur="147.0s" fill="freeze"/></rect>
+       <text x="215" y="148" class="mono dim">1:36</text>
+       <text x="455" y="148" class="mono dim" text-anchor="end">4:03</text>
+</svg>

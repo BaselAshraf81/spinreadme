@@ -1,4 +1,4 @@
-﻿const SCOPES = "user-read-currently-playing user-read-recently-played";
+const SCOPES = "user-read-currently-playing user-read-recently-played";
 const TOKEN_URL = "https://accounts.spotify.com/api/token";
 const AUTH_URL = "https://accounts.spotify.com/authorize";
 const API = "https://api.spotify.com/v1/me/player";
@@ -115,7 +115,7 @@ async function hostedCard(blob, theme, env) {
 // Access tokens last about an hour. Cache them per blob so each card view
 // does not spend a token request. The cache key is the encrypted blob.
 async function cachedToken(blob, creds) {
-  const key = new Request(`https://spindle.internal/token/${blob}`);
+  const key = new Request(`https://spinreadme.internal/token/${blob}`);
   const hit = await caches.default.match(key);
   if (hit) return hit.text();
   const token = await refreshAccessToken(creds);
@@ -269,82 +269,287 @@ const THEMES = {
 const THEME_NAMES = Object.keys(THEMES);
 
 // Setup and result pages. Markup and copy live here, apart from the card.
+const THEME_LABELS = { vinyl: "Vinyl", ice: "Ice", paper: "Paper" };
+const SAMPLE_TRACK = { title: "Midnight City", artist: "M83", duration: 243000, progress: 96000, live: true, playing: true };
+const SAMPLE_COVER =
+  "data:image/svg+xml;base64," +
+  btoa(
+    '<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff5f6d"/><stop offset=".55" stop-color="#7b2ff7"/><stop offset="1" stop-color="#0f2b5b"/></linearGradient></defs><rect width="120" height="120" fill="url(#g)"/><circle cx="84" cy="36" r="18" fill="#ffd07a" opacity=".9"/><path d="M0 92 L28 60 L52 84 L80 52 L120 96 L120 120 L0 120Z" fill="#0b1230" opacity=".8"/></svg>'
+  );
+const sampleCard = (theme) =>
+  "data:image/svg+xml;utf8," + encodeURIComponent(render(SAMPLE_TRACK, SAMPLE_COVER, theme));
+
 const PAGE_CSS = `
-:root { color-scheme: dark; font-family: system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif; }
-body { margin: 0; background: #0f0c0a; color: #f4ece4; line-height: 1.5; }
-main { max-width: 560px; margin: 0 auto; padding: 48px 20px; }
-h1 { font-size: 28px; margin: 0 0 12px; color: #f2a43a; }
-a { color: #f2a43a; }
-code, textarea { font-family: Consolas, Menlo, monospace; font-size: 13px; }
-ol { padding-left: 20px; color: #b8a99b; }
-form { display: grid; gap: 14px; margin: 24px 0; }
-label { display: grid; gap: 6px; font-size: 14px; color: #b8a99b; }
-input, select, textarea { background: #1c1613; color: #f4ece4; border: 1px solid #3a2f28; border-radius: 8px; padding: 10px 12px; font: inherit; box-sizing: border-box; width: 100%; }
-button { background: #f2a43a; color: #0f0c0a; border: 0; border-radius: 8px; padding: 11px 16px; font: inherit; font-weight: 600; cursor: pointer; justify-self: start; }
-.preview { display: block; max-width: 100%; height: auto; margin: 20px 0; }
-textarea { font-size: 13px; margin-bottom: 12px; }
-.note { font-size: 13px; color: #8a7b6f; }
+:root {
+  color-scheme: dark;
+  --bg: #0f0c0a; --panel: #1a1411; --raise: #231c18; --line: #34291f; --line-soft: #271f19;
+  --amber: #f2a43a; --amber-deep: #c9822a; --ink: #f4ece4; --sub: #b8a99b; --dim: #9b8b7e;
+  --display: 'Fraunces', 'Iowan Old Style', 'Palatino Linotype', Georgia, serif;
+  --body: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --mono: ui-monospace, 'SF Mono', Consolas, Menlo, monospace;
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+* { box-sizing: border-box; }
+html { background: var(--bg); scrollbar-color: var(--line) var(--bg); }
+body {
+  margin: 0; min-height: 100vh; color: var(--ink); font: 16px/1.6 var(--body);
+  background:
+    radial-gradient(ellipse 70% 50% at 85% 0%, rgba(242, 164, 58, 0.09), transparent 70%),
+    var(--bg);
+  overflow-x: hidden; -webkit-font-smoothing: antialiased;
+}
+::selection { background: var(--amber); color: #0f0c0a; }
+a { color: var(--amber); text-underline-offset: 3px; text-decoration-thickness: 1px; }
+a:hover { color: #ffc069; }
+:focus-visible { outline: 2px solid var(--amber); outline-offset: 3px; border-radius: 4px; }
+.disc {
+  position: fixed; z-index: 0; right: -190px; top: -150px; width: 560px; aspect-ratio: 1; border-radius: 50%;
+  pointer-events: none; opacity: 0.9;
+  background:
+    radial-gradient(circle, #0f0c0a 0 2.4%, var(--amber) 2.5% 15%, var(--amber-deep) 15.2% 15.8%, transparent 16%),
+    conic-gradient(from 20deg, transparent 0 8%, rgba(255,255,255,0.07) 12%, transparent 17% 58%, rgba(255,255,255,0.06) 63%, transparent 68%),
+    repeating-radial-gradient(circle, #0a0807 0 3px, #1d1815 3px 4px);
+  box-shadow: 0 30px 80px rgba(0,0,0,0.55), 0 0 0 1px var(--line-soft);
+  animation: spin 24s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.wrap { position: relative; z-index: 1; max-width: 1040px; margin: 0 auto; padding: 28px 24px 40px; }
+.top { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.mark { font: 600 20px/1 var(--display); color: var(--ink); text-decoration: none; letter-spacing: -0.01em; }
+.mark:hover { color: var(--amber); }
+.by { font-size: 13px; color: var(--dim); }
+h1 { font: 600 clamp(40px, 7vw, 72px)/1.02 var(--display); letter-spacing: -0.03em; margin: 0; text-wrap: balance; }
+h1 em { font-style: italic; font-weight: 500; color: var(--amber); }
+h2 { font: 600 24px/1.2 var(--display); letter-spacing: -0.01em; margin: 0 0 6px; text-wrap: balance; }
+p { margin: 0; }
+.lede { color: var(--sub); font-size: 18px; max-width: 46ch; margin-top: 20px; text-wrap: pretty; }
+.hero { padding: 72px 0 40px; max-width: 640px; }
+.hero-card { display: block; width: 495px; max-width: 100%; height: auto; margin-top: 40px; border-radius: 14px; box-shadow: 0 24px 48px -12px rgba(0,0,0,0.6); }
+.steps { list-style: none; counter-reset: step; margin: 24px 0 0; padding: 0; display: grid; gap: 0; max-width: 720px; }
+.steps > li { counter-increment: step; position: relative; padding: 0 0 44px 64px; }
+.steps > li::before {
+  content: counter(step); position: absolute; left: 0; top: -2px; width: 40px; height: 40px; display: grid; place-items: center;
+  border-radius: 50%; border: 1px solid var(--line); background: var(--panel); color: var(--amber); font: 600 18px/1 var(--display);
+}
+.steps > li::after { content: ''; position: absolute; left: 19.5px; top: 46px; bottom: 6px; width: 1px; background: var(--line-soft); }
+.steps > li:last-child { padding-bottom: 0; }
+.steps > li:last-child::after { display: none; }
+.step-body { color: var(--sub); max-width: 58ch; }
+.step-body a { color: var(--ink); text-decoration-color: var(--amber); }
+.step-body a:hover { color: var(--amber); }
+.vals { margin: 16px 0 0; display: grid; gap: 8px; max-width: 600px; }
+.val { display: grid; grid-template-columns: 112px 1fr auto; align-items: center; gap: 12px; padding: 8px 8px 8px 14px; background: var(--panel); border: 1px solid var(--line-soft); border-radius: 10px; }
+.val dt { font-size: 13px; color: var(--dim); }
+.val dd { margin: 0; font: 14px/1.4 var(--mono); color: var(--ink); overflow-wrap: anywhere; user-select: all; }
+.val.key { border-color: #5a3f1c; background: #1f1710; }
+.val.key dd { color: #ffd9a0; }
+.val.plain dd { font-family: var(--body); user-select: auto; color: var(--sub); }
+.btn {
+  appearance: none; font: 600 14px/1 var(--body); color: var(--ink); background: var(--raise); border: 1px solid var(--line);
+  border-radius: 8px; padding: 9px 13px; cursor: pointer; min-height: 36px; white-space: nowrap;
+  transition: background-color .2s var(--ease), border-color .2s var(--ease), transform .15s var(--ease), color .2s var(--ease);
+}
+.btn:hover { background: #2d231d; border-color: #4a3a2c; }
+.btn:active { transform: scale(0.97); }
+.btn.done { color: #0f0c0a; background: var(--amber); border-color: var(--amber); }
+.btn.primary { color: #0f0c0a; background: var(--amber); border-color: var(--amber); font-size: 16px; padding: 14px 22px; min-height: 48px; border-radius: 10px; }
+.btn.primary:hover { background: #ffb44f; border-color: #ffb44f; }
+form { margin-top: 18px; display: grid; gap: 16px; max-width: 600px; }
+label.field { display: grid; gap: 6px; font-size: 14px; color: var(--sub); }
+input[type=text], input[type=password] {
+  font: 15px/1.4 var(--mono); color: var(--ink); background: #0b0907; border: 1px solid var(--line); border-radius: 10px;
+  padding: 12px 14px; width: 100%; caret-color: var(--amber); transition: border-color .2s var(--ease), box-shadow .2s var(--ease);
+}
+input::placeholder { color: #6f6256; }
+input[type=text]:focus, input[type=password]:focus { outline: none; border-color: var(--amber); box-shadow: 0 0 0 3px rgba(242, 164, 58, 0.18); }
+fieldset { border: 0; margin: 4px 0 0; padding: 0; min-width: 0; }
+legend { font-size: 14px; color: var(--sub); padding: 0; margin-bottom: 8px; }
+.themes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.theme { position: relative; display: grid; gap: 8px; padding: 8px 8px 10px; background: var(--panel); border: 1px solid var(--line-soft); border-radius: 12px; cursor: pointer; transition: border-color .2s var(--ease), background-color .2s var(--ease), transform .2s var(--ease); }
+.theme:hover { border-color: #4a3a2c; }
+.theme input { position: absolute; opacity: 0; pointer-events: none; }
+.theme img { display: block; width: 100%; height: auto; border-radius: 8px; }
+.theme span { font-size: 14px; font-weight: 600; text-align: center; color: var(--sub); }
+.theme:has(input:checked) { border-color: var(--amber); background: #211810; }
+.theme:has(input:checked) span { color: var(--amber); }
+.theme:has(input:focus-visible) { outline: 2px solid var(--amber); outline-offset: 3px; }
+.fine { font-size: 14px; color: var(--dim); max-width: 58ch; }
+.submit { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin-top: 4px; }
+.foot { margin-top: 72px; padding-top: 20px; border-top: 1px solid var(--line-soft); display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; font-size: 14px; color: var(--dim); }
+.foot a { color: var(--sub); }
+.foot a:hover { color: var(--amber); }
+.result { padding: 64px 0 0; max-width: 700px; }
+.result .preview { display: block; width: 495px; max-width: 100%; height: auto; margin: 36px 0 28px; border-radius: 14px; box-shadow: 0 24px 48px -12px rgba(0,0,0,0.6); background: var(--panel); }
+.chips { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px; }
+.chip { position: relative; cursor: pointer; }
+.chip input { position: absolute; opacity: 0; pointer-events: none; }
+.chip span { display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; border-radius: 99px; font-size: 14px; font-weight: 600; color: var(--sub); border: 1px solid var(--line); background: var(--panel); transition: border-color .2s var(--ease), color .2s var(--ease); }
+.chip i { width: 10px; height: 10px; border-radius: 50%; display: block; }
+.chip:has(input:checked) span { color: var(--amber); border-color: var(--amber); }
+.chip:has(input:focus-visible) span { outline: 2px solid var(--amber); outline-offset: 3px; }
+.code { display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: start; padding: 14px; background: #0b0907; border: 1px solid var(--line); border-radius: 12px; }
+.code textarea { width: 100%; resize: none; border: 0; background: transparent; color: #ffd9a0; font: 13px/1.6 var(--mono); padding: 0; margin: 0; caret-color: var(--amber); overflow-wrap: anywhere; }
+.code textarea:focus { outline: none; }
+.next { margin-top: 28px; color: var(--sub); max-width: 58ch; display: grid; gap: 12px; }
+.next p:last-child { color: var(--dim); font-size: 14px; }
+.err { padding-top: 96px; max-width: 560px; }
+.err .lede { margin-bottom: 28px; }
+@media (max-width: 720px) {
+  .disc { width: 340px; right: -170px; top: -110px; opacity: 0.55; }
+  .hero { padding: 48px 0 24px; }
+  .steps > li { padding-left: 52px; }
+  .steps > li::before { width: 34px; height: 34px; font-size: 16px; }
+  .steps > li::after { left: 16.5px; top: 40px; }
+  .val { grid-template-columns: 1fr auto; }
+  .val dt { grid-column: 1 / -1; margin-bottom: -6px; }
+  .themes { grid-template-columns: 1fr; }
+  .code { grid-template-columns: 1fr; }
+  .result { padding-top: 40px; }
+}
+@media (prefers-reduced-motion: reduce) { .disc { animation: none; } .btn, .theme, input { transition: none; } }
+@media (max-width: 720px) { .theme { grid-template-columns: 1fr; } }
+.rise { animation: rise .8s var(--ease) both; }
+@keyframes rise { from { opacity: 0; transform: translateY(14px); } }
+@media (prefers-reduced-motion: reduce) { .rise { animation: none; } }
 `;
 
-function layout(title, body) {
+const COPY_JS = `
+document.addEventListener("click", async (e) => {
+  const b = e.target.closest("[data-copy]");
+  if (!b) return;
+  const src = b.dataset.copy;
+  const text = src.startsWith("#") ? document.querySelector(src).value : src;
+  try { await navigator.clipboard.writeText(text); }
+  catch { const t = document.createElement("textarea"); t.value = text; document.body.append(t); t.select(); document.execCommand("copy"); t.remove(); }
+  const was = b.textContent; b.textContent = "Copied"; b.classList.add("done");
+  setTimeout(() => { b.textContent = was; b.classList.remove("done"); }, 1600);
+});
+`;
+
+function layout(title, body, script = "") {
   return `<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="referrer" content="no-referrer">
+<meta name="theme-color" content="#0f0c0a">
+<meta name="description" content="A vinyl card for your GitHub README that shows what you are playing on Spotify.">
 <title>${esc(title)}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500..700;1,9..144,500&display=swap" rel="stylesheet">
 <style>${PAGE_CSS}</style>
 </head>
-<body><main>${body}</main></body>
+<body>
+<div class="disc" aria-hidden="true"></div>
+<div class="wrap">
+<header class="top"><a class="mark" href="/">spinreadme</a><span class="by">Made by <a href="https://baselashraf.com" target="_blank" rel="noopener">Basel Ashraf</a></span></header>
+${body}
+<footer class="foot"><span>Nothing is stored on a server.</span><a href="https://github.com/BaselAshraf81/spinreadme" target="_blank" rel="noopener">Source on GitHub</a></footer>
+</div>
+<script>${COPY_JS}${script}</script>
+</body>
 </html>`;
 }
 
+const copyBtn = (v, label = "Copy") => `<button type="button" class="btn" data-copy="${esc(v)}" aria-label="${esc(label)} ${esc(v)}">Copy</button>`;
+const val = (name, v, cls = "") =>
+  `<div class="val ${cls}"><dt>${name}</dt><dd>${esc(v)}</dd>${copyBtn(v)}</div>`;
+
 function setupPage(origin) {
-  const options = THEME_NAMES.map((n) => `<option value="${n}">${n}</option>`).join("");
+  const redirect = `${origin}/callback`;
+  const themes = THEME_NAMES.map(
+    (n, i) =>
+      `<label class="theme"><input type="radio" name="theme" value="${n}"${i === 0 ? " checked" : ""}><img src="${sampleCard(n)}" alt="" width="495" height="170"><span>${THEME_LABELS[n] || n}</span></label>`
+  ).join("");
   return layout(
-    "Spindle",
-    `<h1>Spindle</h1>
-<p>A vinyl card that shows what you are listening to on Spotify, for your GitHub README.</p>
-<ol>
-  <li>Open the <a href="https://developer.spotify.com/dashboard" target="_blank" rel="noopener">Spotify developer dashboard</a> and create an app.</li>
-  <li>Add this Redirect URI: <code>${esc(origin)}/callback</code></li>
-  <li>Select Web API, save, then copy the Client ID and Client secret.</li>
-</ol>
-<form method="post" action="/connect">
-  <label>Client ID <input name="client_id" required autocomplete="off" spellcheck="false"></label>
-  <label>Client secret <input name="client_secret" type="password" required autocomplete="off" spellcheck="false"></label>
-  <label>Theme <select name="theme">${options}</select></label>
-  <button type="submit">Connect Spotify</button>
-</form>
-<p class="note">No database. Your credentials live only inside the encrypted card URL.</p>`
+    "spinreadme: a now playing card for your GitHub README",
+    `<section class="hero rise">
+  <h1>Your music, <em>spinning</em> on your profile.</h1>
+  <p class="lede">Put a vinyl card in your GitHub README. The record turns while a track plays, and the card shows your last track when you stop.</p>
+  <img class="hero-card" src="${sampleCard("vinyl")}" alt="spinreadme card showing Midnight City by M83 on a spinning record" width="495" height="170">
+</section>
+<ol class="steps">
+  <li>
+    <h2>Create a Spotify app</h2>
+    <div class="step-body">
+      <p>Open the <a href="https://developer.spotify.com/dashboard" target="_blank" rel="noopener">Spotify developer dashboard</a>, click Create app, and fill it in with these values. Under "Which API/SDKs are you planning to use?" tick Web API.</p>
+      <dl class="vals">
+        ${val("App name", "spinreadme")}
+        ${val("App description", "Now playing card for my GitHub README")}
+        ${val("Redirect URI", redirect, "key")}
+      </dl>
+      <p class="fine" style="margin-top:12px">Add the redirect URI with the Add button, then save. It has to match exactly, with no trailing slash.</p>
+    </div>
+  </li>
+  <li>
+    <h2>Paste your credentials</h2>
+    <div class="step-body">
+      <p>Open the app, then Settings. Copy the Client ID, then click View client secret and copy that too.</p>
+      <form method="post" action="/connect" autocomplete="off">
+        <label class="field">Client ID<input type="text" name="client_id" required spellcheck="false" autocapitalize="off" autocomplete="off" placeholder="32 characters" pattern="[A-Za-z0-9]{8,128}"></label>
+        <label class="field">Client secret<input type="password" name="client_secret" required spellcheck="false" autocapitalize="off" autocomplete="off" placeholder="32 characters" pattern="[A-Za-z0-9]{8,128}"></label>
+        <fieldset>
+          <legend>Card theme</legend>
+          <div class="themes">${themes}</div>
+        </fieldset>
+        <div class="submit">
+          <button type="submit" class="btn primary">Connect Spotify</button>
+          <p class="fine">Spotify will ask you to approve read-only access to what you are playing.</p>
+        </div>
+      </form>
+    </div>
+  </li>
+  <li>
+    <h2>Paste the Markdown</h2>
+    <div class="step-body">
+      <p>You get a card URL and a line of Markdown. Put it in the README of your profile repository, the one named after your username. The app is yours, so Spotify's 25-user limit does not apply.</p>
+    </div>
+  </li>
+</ol>`
   );
 }
 
 function resultPage(origin, blob, theme) {
-  const card = `${origin}/c/${blob}.svg?theme=${theme}`;
-  const md = `![Spotify now playing](${card})`;
+  const cardUrl = (t) => `${origin}/c/${blob}.svg?theme=${t}`;
+  const md = (t) => `![Spotify now playing](${cardUrl(t)})`;
+  const chips = THEME_NAMES.map(
+    (n) =>
+      `<label class="chip"><input type="radio" name="theme" value="${n}"${n === theme ? " checked" : ""}><span><i style="background:${THEMES[n].accent};box-shadow:0 0 0 2px ${THEMES[n].bgTo}"></i>${THEME_LABELS[n] || n}</span></label>`
+  ).join("");
+  const script = `
+const base = ${JSON.stringify(`${origin}/c/${blob}.svg?theme=`)};
+const pv = document.getElementById("pv"), md = document.getElementById("md");
+document.querySelectorAll('input[name=theme]').forEach((r) => r.addEventListener("change", () => {
+  pv.src = base + r.value; md.value = "![Spotify now playing](" + base + r.value + ")";
+}));`;
   return layout(
-    "Spindle: your card",
-    `<h1>Your card is ready</h1>
-<img class="preview" src="${esc(card)}" alt="Now playing card preview" width="495" height="170">
-<textarea id="md" rows="3" readonly>${esc(md)}</textarea>
-<button type="button" id="copy">Copy Markdown</button>
-<p class="note">Anyone with this link can see your card. To stop it, rotate the client secret in your Spotify app.</p>
-<p><a href="/">Make another</a></p>
-<script>
-document.getElementById("copy").addEventListener("click", async () => {
-  const el = document.getElementById("md");
-  try { await navigator.clipboard.writeText(el.value); } catch { el.select(); document.execCommand("copy"); }
-});
-</script>`
+    "spinreadme: your card is ready",
+    `<section class="result rise">
+  <h1>Your card is <em>ready</em>.</h1>
+  <img id="pv" class="preview" src="${esc(cardUrl(theme))}" alt="Your now playing card" width="495" height="170">
+  <div class="chips" role="radiogroup" aria-label="Theme">${chips}</div>
+  <div class="code">
+    <textarea id="md" rows="3" readonly aria-label="Markdown for your README" spellcheck="false">${esc(md(theme))}</textarea>
+    <button type="button" class="btn primary" data-copy="#md">Copy Markdown</button>
+  </div>
+  <div class="next">
+    <p>Paste it into the README of your profile repository and commit. GitHub can take a minute to refresh the image.</p>
+    <p>The URL holds your encrypted credentials, so anyone who has it can see what you play. Keep it out of places you would not share. To shut it off, reset the client secret in your Spotify app.</p>
+    <p><a href="/">Make another card</a></p>
+  </div>
+</section>`,
+    script
   );
 }
 
 function errorPage(message) {
-  return layout("Spindle", `<h1>Spindle</h1><p>${esc(message)}</p><p><a href="/">Back to setup</a></p>`);
+  return layout(
+    "spinreadme: something went wrong",
+    `<section class="err rise"><h1>That did not <em>work</em>.</h1><p class="lede">${esc(message)}</p><a class="btn primary" style="display:inline-flex;align-items:center;text-decoration:none" href="/">Back to setup</a></section>`
+  );
 }
-
 const esc = (s) =>
   s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 const clip = (s, n) => (s.length > n ? s.slice(0, n - 1).trimEnd() + "…" : s);
