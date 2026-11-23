@@ -25,3 +25,4 @@ Documented
 
 Checks
 - No tests or CI, per request. Nothing was run in this step.
+- End-to-end Spotify OAuth test is still pending by the owner. It runs at https://spinreadme.baselashraf.com with his own Spotify app. The owner chose to close this step without waiting for it.
