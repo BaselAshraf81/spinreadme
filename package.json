@@ -1,0 +1,17 @@
+﻿{
+  "name": "needle-drop",
+  "version": "1.0.0",
+  "description": "A vinyl-style Spotify now-playing card for your GitHub profile README",
+  "private": true,
+  "type": "module",
+  "license": "MIT",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "token": "node scripts/get-token.mjs",
+    "preview": "node scripts/preview.mjs"
+  },
+  "devDependencies": {
+    "wrangler": "^4.0.0"
+  }
+}
