@@ -65,7 +65,7 @@ SPOTIFY_REFRESH_TOKEN=...
 ## Notes
 
 - The card needs the scopes `user-read-currently-playing` and `user-read-recently-played`. Nothing else is requested.
-- GitHub proxies images through its own cache, so the card can lag by a minute or so when you load the profile. The progress bar animate on their own between loads.
+- GitHub proxies images through its own cache, so the card can lag by a minute or so when you load the profile. The progress bar animates on its own between loads.
 - Podcasts and ads are not shown as tracks. In those cases the card falls back to your last played track.
 - Colors, sizes and layout are all in `render()` in `src/worker.js`.
 

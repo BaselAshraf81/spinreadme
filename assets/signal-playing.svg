@@ -7,7 +7,7 @@
     text { font-family: 'Helvetica Neue', 'Segoe UI', Arial, sans-serif; }
     .tag { font-size: 9.5px; font-weight: 800; letter-spacing: 1.5px; }
     .title { font-size: 22px; font-weight: 800; letter-spacing: -0.6px; fill: #fff4e6; }
-    .artist { font-size: 14px; font-weight: 500; fill: #ffe3d4; }
+    .artist { font-size: 14px; font-weight: 500; fill: #fff4e6; }
     .time { font-family: 'SF Mono', Consolas, Menlo, monospace; font-size: 10px; font-weight: 600; }
     .eq { transform-box: fill-box; transform-origin: 50% 100%; transform: scaleY(0.2); }
     .eq.on { animation: bounce 0.8s ease-in-out infinite alternate; }
@@ -29,6 +29,6 @@
   <clipPath id="done"><rect x="150" y="96" width="129.2" height="20"><animate attributeName="width" from="129.2" to="327" dur="147.0s" fill="freeze"/></rect></clipPath>
   <line x1="151.5" y1="106" x2="477" y2="106" stroke-width="16" stroke-dasharray="3 4.4" stroke="#e0584a"/>
   <g clip-path="url(#done)"><line x1="151.5" y1="106" x2="477" y2="106" stroke-width="16" stroke-dasharray="3 4.4" stroke="#fff4e6"/></g>
-  <text x="150" y="132" class="time" fill="#ffe3d4">1:36</text>
-  <text x="477" y="132" class="time" fill="#ffe3d4" text-anchor="end">4:03</text>
+  <text x="150" y="132" class="time" fill="#fff4e6">1:36</text>
+  <text x="477" y="132" class="time" fill="#fff4e6" text-anchor="end">4:03</text>
 </svg>

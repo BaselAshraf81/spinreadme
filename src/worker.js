@@ -253,7 +253,7 @@ const themeFrom = (v) => (Object.hasOwn(THEMES, v) ? v : "paper");
 // accent: played ticks, bars and pill, onAccent: text on the pill, cover: empty cover tile.
 const THEMES = {
   paper: {
-    bg: "#f7f1e5", edge: "#dccfb8", ink: "#2a1710", sub: "#6b5546", dim: "#85705f", tick: "#d9ccb4",
+    bg: "#f7f1e5", edge: "#dccfb8", ink: "#2a1710", sub: "#6b5546", dim: "#76624f", tick: "#d9ccb4",
     accent: "#c8321c", onAccent: "#fff6ea", cover: "#e9dcc4", note: "#b8a487",
   },
   ink: {
@@ -261,7 +261,7 @@ const THEMES = {
     accent: "#ff5a3c", onAccent: "#18120f", cover: "#2a211b", note: "#5a4a3d",
   },
   signal: {
-    bg: "#c8281a", edge: "#a81f13", ink: "#fff4e6", sub: "#ffe3d4", dim: "#ffe3d4", tick: "#e0584a",
+    bg: "#c8281a", edge: "#a81f13", ink: "#fff4e6", sub: "#fff4e6", dim: "#fff4e6", tick: "#e0584a",
     accent: "#fff4e6", onAccent: "#c8281a", cover: "#a81f13", note: "#e0584a",
   },
 };

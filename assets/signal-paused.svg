@@ -7,7 +7,7 @@
     text { font-family: 'Helvetica Neue', 'Segoe UI', Arial, sans-serif; }
     .tag { font-size: 9.5px; font-weight: 800; letter-spacing: 1.5px; }
     .title { font-size: 22px; font-weight: 800; letter-spacing: -0.6px; fill: #fff4e6; }
-    .artist { font-size: 14px; font-weight: 500; fill: #ffe3d4; }
+    .artist { font-size: 14px; font-weight: 500; fill: #fff4e6; }
     .time { font-family: 'SF Mono', Consolas, Menlo, monospace; font-size: 10px; font-weight: 600; }
     .eq { transform-box: fill-box; transform-origin: 50% 100%; transform: scaleY(0.2); }
     .eq.on { animation: bounce 0.8s ease-in-out infinite alternate; }
@@ -18,8 +18,8 @@
   <rect width="495" height="150" rx="16" fill="#c8281a"/>
   <rect x="0.5" y="0.5" width="494" height="149" rx="15.5" fill="none" stroke="#a81f13"/>
   <image href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMDAiIGhlaWdodD0iMzAwIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImciIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj48c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiNmZjVmNmQiLz48c3RvcCBvZmZzZXQ9IjAuNTUiIHN0b3AtY29sb3I9IiM3YjJmZjciLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiMwZjJiNWIiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjMwMCIgZmlsbD0idXJsKCNnKSIvPjxjaXJjbGUgY3g9IjIxMCIgY3k9IjkwIiByPSI0NSIgZmlsbD0iI2ZmZDA3YSIgb3BhY2l0eT0iMC45Ii8+PHBhdGggZD0iTTAgMjMwIEw3MCAxNTAgTDEzMCAyMTAgTDIwMCAxMzAgTDMwMCAyNDAgTDMwMCAzMDAgTDAgMzAwWiIgZmlsbD0iIzBiMTIzMCIgb3BhY2l0eT0iMC44Ii8+PC9zdmc+" x="18" y="18" width="114" height="114" clip-path="url(#round)" preserveAspectRatio="xMidYMid slice"/>
-  <rect x="150.5" y="18.5" width="70" height="19" rx="9.5" fill="none" stroke="#ffe3d4"/>
-  <text x="160" y="31.5" class="tag" fill="#ffe3d4">PAUSED</text>
+  <rect x="150.5" y="18.5" width="70" height="19" rx="9.5" fill="none" stroke="#fff4e6"/>
+  <text x="160" y="31.5" class="tag" fill="#fff4e6">PAUSED</text>
   <rect class="eq" x="445" y="18" width="4" height="20" rx="2" fill="#fff4e6" style="animation-delay:-0.00s;animation-duration:0.62s"/><rect class="eq" x="452.5" y="18" width="4" height="20" rx="2" fill="#fff4e6" style="animation-delay:-0.23s;animation-duration:0.73s"/><rect class="eq" x="460" y="18" width="4" height="20" rx="2" fill="#fff4e6" style="animation-delay:-0.46s;animation-duration:0.84s"/><rect class="eq" x="467.5" y="18" width="4" height="20" rx="2" fill="#fff4e6" style="animation-delay:-0.69s;animation-duration:0.95s"/><rect class="eq" x="475" y="18" width="4" height="20" rx="2" fill="#fff4e6" style="animation-delay:-0.92s;animation-duration:1.06s"/>
   <g clip-path="url(#col)">
     <text x="150" y="66" class="title">Midnight City</text>
@@ -28,6 +28,6 @@
   <clipPath id="done"><rect x="150" y="96" width="129.2" height="20"></rect></clipPath>
   <line x1="151.5" y1="106" x2="477" y2="106" stroke-width="16" stroke-dasharray="3 4.4" stroke="#e0584a"/>
   <g clip-path="url(#done)"><line x1="151.5" y1="106" x2="477" y2="106" stroke-width="16" stroke-dasharray="3 4.4" stroke="#fff4e6"/></g>
-  <text x="150" y="132" class="time" fill="#ffe3d4">1:36</text>
-  <text x="477" y="132" class="time" fill="#ffe3d4" text-anchor="end">4:03</text>
+  <text x="150" y="132" class="time" fill="#fff4e6">1:36</text>
+  <text x="477" y="132" class="time" fill="#fff4e6" text-anchor="end">4:03</text>
 </svg>
