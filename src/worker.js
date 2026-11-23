@@ -246,30 +246,29 @@ function b64Decode(str) {
 
 const clean = (v) => (typeof v === "string" ? v.trim() : "");
 const validCredential = (v) => /^[A-Za-z0-9]{8,128}$/.test(v);
-const themeFrom = (v) => (Object.hasOwn(THEMES, v) ? v : "vinyl");
+const themeFrom = (v) => (Object.hasOwn(THEMES, v) ? v : "paper");
 
 // Card palettes. Keys map to the colour roles used in render().
+// bg: card, edge: 1px border, ink: title, sub: artist, dim: times, tick: unplayed ticks,
+// accent: played ticks, bars and pill, onAccent: text on the pill, cover: empty cover tile.
 const THEMES = {
-  vinyl: {
-    bgFrom: "#1c1613", bgTo: "#0f0c0a", accent: "#f2a43a", ring: "#c9822a", ink: "#f4ece4", sub: "#b8a99b",
-    dim: "#8a7b6f", track: "#2e2621", line: "#3a2f28", groove: "#1d1815", disc: "#0a0807", hole: "#0f0c0a",
-    note: "#4a3d35", coverBg: "#241d19",
-  },
-  ice: {
-    bgFrom: "#15202b", bgTo: "#070b10", accent: "#7dd3fc", ring: "#38bdf8", ink: "#eef8ff", sub: "#9fb9cc",
-    dim: "#607a8c", track: "#1b2a37", line: "#243746", groove: "#132029", disc: "#070d13", hole: "#070b10",
-    note: "#2d4558", coverBg: "#172530",
-  },
   paper: {
-    bgFrom: "#fbf6ec", bgTo: "#ebe1cc", accent: "#c2410c", ring: "#9a3412", ink: "#2a1e16", sub: "#6b5646",
-    dim: "#9a8878", track: "#d8cbb4", line: "#cdbfa6", groove: "#d9ccb5", disc: "#2a211b", hole: "#fbf6ec",
-    note: "#8a7a68", coverBg: "#e4d8c3",
+    bg: "#f7f1e5", edge: "#dccfb8", ink: "#2a1710", sub: "#6b5546", dim: "#85705f", tick: "#d9ccb4",
+    accent: "#c8321c", onAccent: "#fff6ea", cover: "#e9dcc4", note: "#b8a487",
+  },
+  ink: {
+    bg: "#18120f", edge: "#33291f", ink: "#f8f0e4", sub: "#bcab98", dim: "#9a8a79", tick: "#3a2f27",
+    accent: "#ff5a3c", onAccent: "#18120f", cover: "#2a211b", note: "#5a4a3d",
+  },
+  signal: {
+    bg: "#c8281a", edge: "#a81f13", ink: "#fff4e6", sub: "#ffe3d4", dim: "#ffe3d4", tick: "#e0584a",
+    accent: "#fff4e6", onAccent: "#c8281a", cover: "#a81f13", note: "#e0584a",
   },
 };
 const THEME_NAMES = Object.keys(THEMES);
 
 // Setup, result and error pages. Markup, copy and styles live here, apart from the card.
-const THEME_LABELS = { vinyl: "Vinyl", ice: "Ice", paper: "Paper" };
+const THEME_LABELS = { paper: "Paper", ink: "Ink", signal: "Signal" };
 const SAMPLE_TRACK = { title: "Midnight City", artist: "M83", duration: 243000, progress: 96000, live: true, playing: true };
 const SAMPLE_COVER =
   "data:image/svg+xml;base64," +
@@ -342,9 +341,9 @@ h2 { font: 700 1.5rem/1.15 var(--display); letter-spacing: -0.025em; text-wrap: 
 .sleeve .rec { position: absolute; z-index: 0; right: -7%; top: 50%; width: 62%; max-width: 300px; translate: 0 -50%; animation: slide 1.1s 0.15s var(--out) both; }
 .sleeve .rec svg { display: block; width: 100%; height: auto; }
 .pv { position: relative; z-index: 1; display: none; width: 100%; max-width: 495px; height: auto; border-radius: 14px; box-shadow: var(--shadow); animation: lift 0.8s var(--out) both; }
-.stage:has(input[value=vinyl]:checked) .pv-vinyl,
-.stage:has(input[value=ice]:checked) .pv-ice,
-.stage:has(input[value=paper]:checked) .pv-paper { display: block; }
+.stage:has(input[value=paper]:checked) .pv-paper,
+.stage:has(input[value=ink]:checked) .pv-ink,
+.stage:has(input[value=signal]:checked) .pv-signal { display: block; }
 @keyframes lift { from { opacity: 0; translate: 0 14px; filter: blur(6px); } }
 @keyframes slide { from { translate: -42% -50%; rotate: -50deg; opacity: 0; } }
 
@@ -466,7 +465,7 @@ function layout(title, body, script = "") {
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="referrer" content="no-referrer">
 <meta name="theme-color" content="#f6f1e7">
-<meta name="description" content="A vinyl card for your GitHub README that shows what you are playing on Spotify.">
+<meta name="description" content="A now playing card for your GitHub README that shows what you are playing on Spotify.">
 <title>${esc(title)}</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -499,12 +498,12 @@ const val = (name, v, cls = "") =>
   `<div class="val ${cls}"><dt>${esc(name)}</dt><dd>${breakable(v)}</dd>${copyBtn(v, name)}</div>`;
 
 const themeSwatch = (n) =>
-  `<i class="dot" style="background:linear-gradient(135deg,${THEMES[n].bgFrom} 50%,${THEMES[n].accent} 50%)"></i>`;
+  `<i class="dot" style="background:linear-gradient(135deg,${THEMES[n].bg} 50%,${THEMES[n].accent} 50%)"></i>`;
 
 function setupPage(origin) {
   const redirect = `${origin}/callback`;
   const previews = THEME_NAMES.map(
-    (n) => `<img class="pv pv-${n}" src="${sampleCard(n)}" alt="Sample ${THEME_LABELS[n] || n} card: Midnight City by M83" width="495" height="170">`
+    (n) => `<img class="pv pv-${n}" src="${sampleCard(n)}" alt="Sample ${THEME_LABELS[n] || n} card: Midnight City by M83" width="495" height="150">`
   ).join("");
   const opts = THEME_NAMES.map(
     (n, i) =>
@@ -515,7 +514,7 @@ function setupPage(origin) {
     `<section class="hero" aria-labelledby="top">
   <div>
     <h1 id="top">Show what you are playing on your GitHub profile.</h1>
-    <p class="lede">A vinyl card for your README. The record spins while a Spotify track plays and shows your last track when it stops.</p>
+    <p class="lede">A now playing card for your README. It shows the Spotify track you are playing and keeps the last one when you stop.</p>
   </div>
   <div class="stage">
     <div class="sleeve">
@@ -587,7 +586,7 @@ document.querySelectorAll('input[name=theme]').forEach((r) => r.addEventListener
   <div class="stage">
     <div class="sleeve">
       <div class="rec">${RECORD_SVG()}</div>
-      <img id="pv" class="pv" style="display:block" src="${esc(cardUrl(theme))}" alt="Your now playing card" width="495" height="170">
+      <img id="pv" class="pv" style="display:block" src="${esc(cardUrl(theme))}" alt="Your now playing card" width="495" height="150">
     </div>
     <fieldset class="picker">
       <legend>Theme</legend>
@@ -634,83 +633,70 @@ const mmss = (ms) => {
   return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
 };
 
-export function render(track, cover, theme = "vinyl") {
-  const c = THEMES[theme] || THEMES.vinyl;
-  const spinning = !!(track && track.playing);
-  const label = !track ? "SILENCE" : track.playing ? "NOW PLAYING" : track.live ? "PAUSED" : "LAST PLAYED";
-  const title = track ? clip(track.title, 25) : "Nothing on the turntable";
-  const artist = track ? clip(track.artist, 34) : "Check back later";
-  const BAR = 240;
+export function render(track, cover, theme = "paper") {
+  const c = THEMES[theme] || THEMES.paper;
+  const live = !!(track && track.playing);
+  const label = !track ? "NO DATA" : track.playing ? "NOW PLAYING" : track.live ? "PAUSED" : "LAST PLAYED";
+  const title = track ? clip(track.title, 26) : "Nothing playing";
+  const artist = track ? clip(track.artist, 40) : "Check back later";
+  const X = 150, W = 327; // text column and its width
   const frac = track && track.duration ? Math.min(track.progress / track.duration, 1) : 0;
-  const startW = (BAR * frac).toFixed(1);
+  const startW = (W * frac).toFixed(1);
   const remain = track ? Math.max((track.duration - track.progress) / 1000, 0) : 0;
-  const progressAnim = spinning
-    ? `<animate attributeName="width" from="${startW}" to="${BAR}" dur="${remain.toFixed(1)}s" fill="freeze"/>`
+  const fill = live
+    ? `<animate attributeName="width" from="${startW}" to="${W}" dur="${remain.toFixed(1)}s" fill="freeze"/>`
     : "";
+  const pillW = Math.round((live ? 38 : 28) + label.length * 7.2);
+  const pill = live
+    ? `<rect x="${X}" y="18" width="${pillW}" height="20" rx="10" fill="${c.accent}"/>
+  <circle class="dot" cx="${X + 11}" cy="28" r="2.5" fill="${c.onAccent}"/>
+  <text x="${X + 20}" y="31.5" class="tag" fill="${c.onAccent}">${label}</text>`
+    : `<rect x="${X + 0.5}" y="18.5" width="${pillW - 1}" height="19" rx="9.5" fill="none" stroke="${c.dim}"/>
+  <text x="${X + 10}" y="31.5" class="tag" fill="${c.dim}">${label}</text>`;
   const art = cover
-    ? `<image href="${cover}" x="20" y="25" width="120" height="120" clip-path="url(#round)" preserveAspectRatio="xMidYMid slice"/>`
-    : `<rect x="20" y="25" width="120" height="120" rx="8" fill="${c.coverBg}"/>
-       <text x="80" y="95" font-size="40" text-anchor="middle" fill="${c.note}">â™ª</text>`;
-  const bars = [0, 1, 2, 3]
+    ? `<image href="${cover}" x="18" y="18" width="114" height="114" clip-path="url(#round)" preserveAspectRatio="xMidYMid slice"/>`
+    : `<rect x="18" y="18" width="114" height="114" rx="10" fill="${c.cover}"/>
+  <g fill="${c.note}"><ellipse cx="68" cy="99" rx="11" ry="8" transform="rotate(-18 68 99)"/><rect x="77" y="52" width="4.5" height="46"/><path d="M81 52 Q101 58 98 80 Q92 68 81 68Z"/></g>`;
+  const bars = [0, 1, 2, 3, 4]
     .map(
       (i) =>
-        `<rect class="eq${spinning ? " on" : ""}" x="${446 + i * 8}" y="24" width="4" height="16" rx="2" fill="${c.accent}" style="animation-delay:${i * 0.17}s;animation-duration:${(0.7 + i * 0.13).toFixed(2)}s"/>`
+        `<rect class="eq${live ? " on" : ""}" x="${445 + i * 7.5}" y="18" width="4" height="20" rx="2" fill="${c.accent}" style="animation-delay:-${(i * 0.23).toFixed(2)}s;animation-duration:${(0.62 + i * 0.11).toFixed(2)}s"/>`
     )
     .join("");
+  const ticks = `<line x1="${X + 1.5}" y1="106" x2="${X + W}" y2="106" stroke-width="16" stroke-dasharray="3 4.4"`;
   const progress = track
-    ? `<rect x="215" y="124" width="${BAR}" height="4" rx="2" fill="${c.track}"/>
-       <rect x="215" y="124" width="${startW}" height="4" rx="2" fill="${c.accent}">${progressAnim}</rect>
-       <text x="215" y="148" class="mono dim">${mmss(track.progress)}</text>
-       <text x="455" y="148" class="mono dim" text-anchor="end">${mmss(track.duration)}</text>`
-    : "";
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="495" height="170" viewBox="0 0 495 170" role="img" aria-label="${esc(label)}: ${esc(title)} by ${esc(artist)}">
+    ? `<clipPath id="done"><rect x="${X}" y="96" width="${startW}" height="20">${fill}</rect></clipPath>
+  ${ticks} stroke="${c.tick}"/>
+  <g clip-path="url(#done)">${ticks} stroke="${c.accent}"/></g>
+  <text x="${X}" y="132" class="time" fill="${c.dim}">${mmss(track.progress)}</text>
+  <text x="${X + W}" y="132" class="time" fill="${c.dim}" text-anchor="end">${mmss(track.duration)}</text>`
+    : `${ticks} stroke="${c.tick}"/>`;
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="495" height="150" viewBox="0 0 495 150" role="img" aria-label="${esc(label)}: ${esc(title)} by ${esc(artist)}">
   <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="${c.bgFrom}"/><stop offset="1" stop-color="${c.bgTo}"/>
-    </linearGradient>
-    <clipPath id="round"><rect x="20" y="25" width="120" height="120" rx="8"/></clipPath>
-    <radialGradient id="glow" cx="0.2" cy="0.5" r="0.8">
-      <stop offset="0" stop-color="${c.accent}" stop-opacity="0.12"/><stop offset="1" stop-color="${c.accent}" stop-opacity="0"/>
-    </radialGradient>
+    <clipPath id="round"><rect x="18" y="18" width="114" height="114" rx="10"/></clipPath>
+    <clipPath id="col"><rect x="${X}" y="0" width="${W}" height="150"/></clipPath>
   </defs>
   <style>
-    text { font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif; }
-    .mono { font-family: 'SF Mono', Consolas, Menlo, monospace; font-size: 10px; }
-    .dim { fill: ${c.dim}; }
-    .tag { font-size: 10px; font-weight: 600; letter-spacing: 2.4px; fill: ${c.accent}; }
-    .title { font-size: 19px; font-weight: 700; fill: ${c.ink}; }
-    .artist { font-size: 13px; fill: ${c.sub}; }
-    .spin { transform-origin: 140px 85px; animation: spin 3.2s linear infinite; animation-play-state: ${spinning ? "running" : "paused"}; }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    .eq { transform-box: fill-box; transform-origin: 50% 100%; transform: scaleY(0.25); }
-    .eq.on { animation: bounce 0.9s ease-in-out infinite alternate; }
+    text { font-family: 'Helvetica Neue', 'Segoe UI', Arial, sans-serif; }
+    .tag { font-size: 9.5px; font-weight: 800; letter-spacing: 1.5px; }
+    .title { font-size: 22px; font-weight: 800; letter-spacing: -0.6px; fill: ${c.ink}; }
+    .artist { font-size: 14px; font-weight: 500; fill: ${c.sub}; }
+    .time { font-family: 'SF Mono', Consolas, Menlo, monospace; font-size: 10px; font-weight: 600; }
+    .eq { transform-box: fill-box; transform-origin: 50% 100%; transform: scaleY(0.2); }
+    .eq.on { animation: bounce 0.8s ease-in-out infinite alternate; }
     @keyframes bounce { from { transform: scaleY(0.2); } to { transform: scaleY(1); } }
-    .dot { animation: pulse 1.6s ease-in-out infinite; }
-    @keyframes pulse { 50% { opacity: 0.25; } }
+    .dot { animation: pulse 1.4s ease-in-out infinite; }
+    @keyframes pulse { 50% { opacity: 0.3; } }
   </style>
-  <rect width="495" height="170" rx="14" fill="url(#bg)"/>
-  <rect width="495" height="170" rx="14" fill="url(#glow)"/>
-  <rect x="0.5" y="0.5" width="494" height="169" rx="13.5" fill="none" stroke="${c.line}"/>
-  <g class="spin">
-    <circle cx="140" cy="85" r="64" fill="${c.disc}"/>
-    <circle cx="140" cy="85" r="58" fill="none" stroke="${c.groove}" stroke-width="1"/>
-    <circle cx="140" cy="85" r="52" fill="none" stroke="${c.groove}" stroke-width="1"/>
-    <circle cx="140" cy="85" r="46" fill="none" stroke="${c.groove}" stroke-width="1"/>
-    <circle cx="140" cy="85" r="40" fill="none" stroke="${c.groove}" stroke-width="1"/>
-    <circle cx="140" cy="85" r="34" fill="none" stroke="${c.groove}" stroke-width="1"/>
-    <path d="M140 85 L140 21 A64 64 0 0 1 185 40 Z" fill="#fff" opacity="0.05"/>
-    <path d="M140 85 L140 149 A64 64 0 0 1 95 130 Z" fill="#fff" opacity="0.05"/>
-    <circle cx="140" cy="85" r="21" fill="${c.accent}"/>
-    <circle cx="140" cy="85" r="15" fill="none" stroke="${c.ring}" stroke-width="1"/>
-    <circle cx="140" cy="85" r="3.5" fill="${c.hole}"/>
-  </g>
+  <rect width="495" height="150" rx="16" fill="${c.bg}"/>
+  <rect x="0.5" y="0.5" width="494" height="149" rx="15.5" fill="none" stroke="${c.edge}"/>
   ${art}
-  <rect x="20" y="25" width="120" height="120" rx="8" fill="none" stroke="#fff" stroke-opacity="0.08"/>
-  <circle class="${spinning ? "dot" : ""}" cx="219" cy="35" r="3" fill="${c.accent}"/>
-  <text x="228" y="39" class="tag">${label}</text>
+  ${pill}
   ${bars}
-  <text x="215" y="76" class="title">${esc(title)}</text>
-  <text x="215" y="98" class="artist">${esc(artist)}</text>
+  <g clip-path="url(#col)">
+    <text x="${X}" y="66" class="title">${esc(title)}</text>
+    <text x="${X}" y="86" class="artist">${esc(artist)}</text>
+  </g>
   ${progress}
 </svg>`;
 }

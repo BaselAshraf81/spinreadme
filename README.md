@@ -1,12 +1,13 @@
 # spinreadme
 
-A vinyl-style "now playing" card for your GitHub profile README, fed by the Spotify API.
+A "now playing" card for your GitHub profile README, fed by the Spotify API.
 
-![now playing](assets/playing.svg)
+![now playing](assets/paper-playing.svg)
 
-The record spins while a track plays, the bars bounce, and the progress bar fills in real time. When nothing is playing it shows your last played track with a still record.
+While a track plays the bars bounce and the tick progress bar fills in real time. When nothing is playing it shows your last played track. Themes: `paper`, `ink`, `signal`, chosen with `?theme=`.
 
-![idle](assets/idle.svg)
+![ink](assets/ink-playing.svg)
+![signal](assets/signal-last.svg)
 
 It runs as a single Cloudflare Worker with no dependencies. The Worker asks Spotify what you are listening to, embeds the album cover in an SVG and returns it. GitHub only displays images, so the cover has to be inlined; that is why this is rendered server side.
 
@@ -64,7 +65,7 @@ SPOTIFY_REFRESH_TOKEN=...
 ## Notes
 
 - The card needs the scopes `user-read-currently-playing` and `user-read-recently-played`. Nothing else is requested.
-- GitHub proxies images through its own cache, so the card can lag by a minute or so when you load the profile. The progress bar and spinning record animate on their own between loads.
+- GitHub proxies images through its own cache, so the card can lag by a minute or so when you load the profile. The progress bar animate on their own between loads.
 - Podcasts and ads are not shown as tracks. In those cases the card falls back to your last played track.
 - Colors, sizes and layout are all in `render()` in `src/worker.js`.
 

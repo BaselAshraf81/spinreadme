@@ -1,7 +1,7 @@
 
 # spinreadme: plan
 
-Live "now playing" vinyl card for GitHub READMEs. Hosted at `spinreadme.baselashraf.com`. No self-hosting needed; self-hosting still works.
+Live "now playing" card for GitHub READMEs. Hosted at `spinreadme.baselashraf.com`. No self-hosting needed; self-hosting still works.
 
 ## Stack
 - One Cloudflare Worker (free plan), no framework, no database, no runtime deps.
@@ -23,7 +23,7 @@ Spotify dev-mode apps allow 25 users, added by email by hand. Extended quota is 
 - Never log credentials or blobs. `state` expires after 10 min.
 
 ## Card
-- Existing vinyl design (`render()`), plus 2-3 themes via `?theme=`.
+- Poster-style tick-bar card (`render()`), themes paper, ink, signal via `?theme=`.
 - Access token cached per blob in memory/Cache API for ~50 min to save Spotify calls.
 - `Cache-Control: no-cache` so GitHub's camo refetches.
 

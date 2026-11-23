@@ -1,7 +1,7 @@
 {
   "name": "spinreadme",
   "version": "1.0.0",
-  "description": "A vinyl-style Spotify now-playing card for your GitHub profile README",
+  "description": "A Spotify now-playing card for your GitHub profile README",
   "private": true,
   "type": "module",
   "license": "MIT",
