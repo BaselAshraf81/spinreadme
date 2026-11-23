@@ -1,4 +1,4 @@
-﻿# spinreadme
+# spinreadme
 
 A vinyl-style "now playing" card for your GitHub profile README, fed by the Spotify API.
 

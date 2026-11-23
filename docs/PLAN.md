@@ -1,4 +1,3 @@
-Final name: spinreadme. Domain: spinreadme.baselashraf.com. Overrides any mention of Spindle/spindle.baselashraf.com in briefs.
 
 # spinreadme: plan
 

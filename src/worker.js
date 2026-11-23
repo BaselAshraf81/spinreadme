@@ -395,7 +395,7 @@ legend { font-size: 14px; color: var(--sub); padding: 0; margin-bottom: 8px; }
 .err { padding-top: 96px; max-width: 560px; }
 .err .lede { margin-bottom: 28px; }
 @media (max-width: 720px) {
-  .disc { width: 340px; right: -170px; top: -110px; opacity: 0.55; }
+  .disc { width: 300px; right: -190px; top: 150px; opacity: 0.35; }
   .hero { padding: 48px 0 24px; }
   .steps > li { padding-left: 52px; }
   .steps > li::before { width: 34px; height: 34px; font-size: 16px; }
@@ -552,7 +552,7 @@ function errorPage(message) {
 }
 const esc = (s) =>
   s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
-const clip = (s, n) => (s.length > n ? s.slice(0, n - 1).trimEnd() + "…" : s);
+const clip = (s, n) => (s.length > n ? s.slice(0, n - 1).trimEnd() + "â€¦" : s);
 const mmss = (ms) => {
   const s = Math.floor(ms / 1000);
   return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
@@ -574,7 +574,7 @@ export function render(track, cover, theme = "vinyl") {
   const art = cover
     ? `<image href="${cover}" x="20" y="25" width="120" height="120" clip-path="url(#round)" preserveAspectRatio="xMidYMid slice"/>`
     : `<rect x="20" y="25" width="120" height="120" rx="8" fill="${c.coverBg}"/>
-       <text x="80" y="95" font-size="40" text-anchor="middle" fill="${c.note}">♪</text>`;
+       <text x="80" y="95" font-size="40" text-anchor="middle" fill="${c.note}">â™ª</text>`;
   const bars = [0, 1, 2, 3]
     .map(
       (i) =>
