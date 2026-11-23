@@ -268,7 +268,7 @@ const THEMES = {
 };
 const THEME_NAMES = Object.keys(THEMES);
 
-// Setup and result pages. Markup and copy live here, apart from the card.
+// Setup, result and error pages. Markup, copy and styles live here, apart from the card.
 const THEME_LABELS = { vinyl: "Vinyl", ice: "Ice", paper: "Paper" };
 const SAMPLE_TRACK = { title: "Midnight City", artist: "M83", duration: 243000, progress: 96000, live: true, playing: true };
 const SAMPLE_COVER =
@@ -279,141 +279,164 @@ const SAMPLE_COVER =
 const sampleCard = (theme) =>
   "data:image/svg+xml;utf8," + encodeURIComponent(render(SAMPLE_TRACK, SAMPLE_COVER, theme));
 
+const REPO_URL = "https://github.com/BaselAshraf81/spinreadme";
+
 const PAGE_CSS = `
 :root {
-  color-scheme: dark;
-  --bg: #0f0c0a; --panel: #1a1411; --raise: #231c18; --line: #34291f; --line-soft: #271f19;
-  --amber: #f2a43a; --amber-deep: #c9822a; --ink: #f4ece4; --sub: #b8a99b; --dim: #9b8b7e;
-  --display: 'Fraunces', 'Iowan Old Style', 'Palatino Linotype', Georgia, serif;
-  --body: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-  --mono: ui-monospace, 'SF Mono', Consolas, Menlo, monospace;
-  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  color-scheme: light;
+  --paper: oklch(0.968 0.014 85);
+  --sunk: oklch(0.935 0.02 85);
+  --field: oklch(0.99 0.006 85);
+  --ink: oklch(0.2 0.02 55);
+  --ink-2: oklch(0.4 0.02 55);
+  --ink-3: oklch(0.5 0.02 55);
+  --rule: oklch(0.86 0.02 85);
+  --rule-strong: oklch(0.7 0.025 70);
+  --accent: oklch(0.5 0.19 35);
+  --accent-hi: oklch(0.43 0.17 35);
+  --display: 'Bricolage Grotesque', 'Segoe UI Variable Display', 'Segoe UI', system-ui, sans-serif;
+  --body: 'Bricolage Grotesque', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Consolas, Menlo, monospace;
+  --out: cubic-bezier(0.16, 1, 0.3, 1);
+  --shadow: 0 1px 2px oklch(0.2 0.02 55 / 0.12), 0 12px 28px -8px oklch(0.2 0.02 55 / 0.35);
 }
 * { box-sizing: border-box; }
-html { background: var(--bg); scrollbar-color: var(--line) var(--bg); }
+html { background: var(--paper); scrollbar-color: var(--rule-strong) var(--paper); accent-color: var(--accent); -webkit-text-size-adjust: 100%; }
 body {
-  margin: 0; min-height: 100vh; color: var(--ink); font: 16px/1.6 var(--body);
-  background:
-    radial-gradient(ellipse 70% 50% at 85% 0%, rgba(242, 164, 58, 0.09), transparent 70%),
-    var(--bg);
-  overflow-x: hidden; -webkit-font-smoothing: antialiased;
+  margin: 0; min-height: 100vh; display: flex; flex-direction: column; color: var(--ink);
+  font: 400 1rem/1.6 var(--body); font-optical-sizing: auto; -webkit-font-smoothing: antialiased;
+  font-variant-numeric: tabular-nums; overflow-x: hidden;
 }
-::selection { background: var(--amber); color: #0f0c0a; }
-a { color: var(--amber); text-underline-offset: 3px; text-decoration-thickness: 1px; }
-a:hover { color: #ffc069; }
-:focus-visible { outline: 2px solid var(--amber); outline-offset: 3px; border-radius: 4px; }
-.disc {
-  position: fixed; z-index: 0; right: -190px; top: -150px; width: 560px; aspect-ratio: 1; border-radius: 50%;
-  pointer-events: none; opacity: 0.9;
-  background:
-    radial-gradient(circle, #0f0c0a 0 2.4%, var(--amber) 2.5% 15%, var(--amber-deep) 15.2% 15.8%, transparent 16%),
-    conic-gradient(from 20deg, transparent 0 8%, rgba(255,255,255,0.07) 12%, transparent 17% 58%, rgba(255,255,255,0.06) 63%, transparent 68%),
-    repeating-radial-gradient(circle, #0a0807 0 3px, #1d1815 3px 4px);
-  box-shadow: 0 30px 80px rgba(0,0,0,0.55), 0 0 0 1px var(--line-soft);
-  animation: spin 24s linear infinite;
+::selection { background: var(--accent); color: var(--paper); }
+a { color: inherit; text-decoration-color: var(--accent); text-decoration-thickness: 1.5px; text-underline-offset: 0.2em; }
+a:hover { color: var(--accent); }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
+p, h1, h2, dl, dd, ol, fieldset { margin: 0; padding: 0; }
+.skip { position: absolute; left: 1rem; top: -4rem; background: var(--ink); color: var(--paper); padding: 0.6rem 1rem; border-radius: 8px; z-index: 5; }
+.skip:focus { top: 1rem; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+:root { --gutter: clamp(1.25rem, 4vw, 2.5rem); }
+.bar, main { width: 100%; max-width: 70rem; margin-inline: auto; padding-inline: var(--gutter); }
+.bar { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding-block: 1.25rem; }
+.brand { display: inline-flex; align-items: center; gap: 0.6rem; font: 700 1.25rem/1 var(--display); letter-spacing: -0.02em; text-decoration: none; }
+.brand:hover { color: var(--ink); }
+.brand svg { width: 1.75rem; height: 1.75rem; transition: rotate 0.9s var(--out); }
+.brand:hover svg, .brand:focus-visible svg { rotate: 200deg; }
+.bar nav a { font-size: 0.9375rem; color: var(--ink-2); padding: 0.5rem 0; }
+main { flex: 1; padding-block: clamp(1.5rem, 5vw, 3.5rem) 3rem; }
+
+h1 { font: 800 clamp(2.5rem, 6.4vw, 4.75rem)/0.98 var(--display); letter-spacing: -0.04em; text-wrap: balance; }
+h2 { font: 700 1.5rem/1.15 var(--display); letter-spacing: -0.025em; text-wrap: balance; }
+.lede { margin-top: 1.5rem; font-size: 1.1875rem; line-height: 1.55; color: var(--ink-2); max-width: 36ch; text-wrap: pretty; }
+.text { color: var(--ink-2); max-width: 62ch; text-wrap: pretty; }
+.text + .text { margin-top: 0.75rem; }
+.text a { color: var(--ink); }
+.text a:hover { color: var(--accent); }
+.fine { font-size: 0.875rem; line-height: 1.55; color: var(--ink-3); max-width: 60ch; text-wrap: pretty; }
+
+/* hero: record sliding out of a sleeve */
+.hero { display: grid; gap: 2.5rem; align-items: center; }
+.stage { position: relative; overflow: hidden; background: var(--sunk); border-radius: 20px; padding: clamp(1rem, 3vw, 2rem); display: grid; gap: 1.25rem; }
+.sleeve { position: relative; min-height: 0; }
+.sleeve .rec { position: absolute; z-index: 0; right: -7%; top: 50%; width: 62%; max-width: 300px; translate: 0 -50%; animation: slide 1.1s 0.15s var(--out) both; }
+.sleeve .rec svg { display: block; width: 100%; height: auto; }
+.pv { position: relative; z-index: 1; display: none; width: 100%; max-width: 495px; height: auto; border-radius: 14px; box-shadow: var(--shadow); animation: lift 0.8s var(--out) both; }
+.stage:has(input[value=vinyl]:checked) .pv-vinyl,
+.stage:has(input[value=ice]:checked) .pv-ice,
+.stage:has(input[value=paper]:checked) .pv-paper { display: block; }
+@keyframes lift { from { opacity: 0; translate: 0 14px; filter: blur(6px); } }
+@keyframes slide { from { translate: -42% -50%; rotate: -50deg; opacity: 0; } }
+
+/* theme picker */
+.picker { border: 0; min-width: 0; }
+.picker legend { padding: 0; margin-bottom: 0.5rem; font-size: 0.875rem; color: var(--ink-2); }
+.opts { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.opt { position: relative; cursor: pointer; }
+.opt input { position: absolute; inset: 0; opacity: 0; margin: 0; cursor: pointer; }
+.opt span { display: inline-flex; align-items: center; gap: 0.5rem; min-height: 2.75rem; padding: 0 1rem 0 0.75rem; border-radius: 999px; background: var(--field); box-shadow: inset 0 0 0 1px var(--rule-strong); font-size: 0.9375rem; font-weight: 600; color: var(--ink-2); transition: background-color 0.2s var(--out), color 0.2s var(--out), box-shadow 0.2s var(--out), scale 0.15s var(--out); }
+.opt:hover span { box-shadow: inset 0 0 0 1px var(--ink); color: var(--ink); }
+.opt:active span { scale: 0.96; }
+.opt input:checked + span { background: var(--ink); color: var(--paper); box-shadow: inset 0 0 0 1px var(--ink); }
+.opt input:focus-visible + span { outline: 2px solid var(--accent); outline-offset: 3px; }
+.dot { width: 1.125rem; height: 1.125rem; border-radius: 50%; box-shadow: 0 0 0 1px oklch(1 0 0 / 0.35); }
+
+/* steps */
+.steps { list-style: none; margin-top: clamp(3rem, 8vw, 6rem); border-bottom: 1px solid var(--rule); }
+.step { display: grid; gap: 1.25rem; padding-block: 2.25rem; border-top: 1px solid var(--rule); }
+.step-head { display: flex; align-items: baseline; gap: 0.75rem; }
+.n { font: 800 1.5rem/1 var(--display); color: var(--accent); min-width: 1.25rem; }
+.step-body { display: grid; gap: 1.25rem; align-content: start; min-width: 0; }
+
+.vals { display: grid; gap: 0.5rem; max-width: 40rem; }
+.val { display: grid; grid-template-columns: 8.5rem minmax(0, 1fr) auto; align-items: center; column-gap: 0.75rem; row-gap: 0.25rem; padding: 0.5rem 0.5rem 0.5rem 1rem; background: var(--field); border-radius: 12px; box-shadow: inset 0 0 0 1px var(--rule); }
+.val dt { font-size: 0.875rem; color: var(--ink-3); }
+.val dd { font: 500 0.8125rem/1.5 var(--mono); overflow-wrap: normal; word-break: normal; user-select: all; }
+.val.key { box-shadow: inset 0 0 0 1.5px var(--accent); }
+
+.btn { appearance: none; display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; min-height: 2.75rem; padding: 0 1rem; font: 600 0.9375rem/1 var(--body); color: var(--ink); background: var(--sunk); border: 0; border-radius: 9px; cursor: pointer; text-decoration: none; white-space: nowrap; transition: background-color 0.2s var(--out), color 0.2s var(--out), scale 0.15s var(--out); }
+.btn:hover { background: var(--rule); color: var(--ink); }
+.btn:active { scale: 0.96; }
+.btn.done, .btn.done:hover { background: var(--ink); color: var(--paper); }
+.btn.big { min-height: 3.25rem; padding: 0 1.5rem; font-size: 1rem; border-radius: 12px; background: var(--ink); color: var(--paper); }
+.btn.big:hover { background: var(--accent); color: var(--paper); }
+.btn.big.done { background: var(--accent); }
+
+form { display: grid; gap: 1.25rem; max-width: 40rem; }
+.field { display: grid; gap: 0.4rem; font-size: 0.9375rem; font-weight: 600; }
+input[type=text], input[type=password] { width: 100%; min-height: 3rem; padding: 0 1rem; font: 500 0.9375rem/1 var(--mono); color: var(--ink); background: var(--field); border: 0; border-radius: 10px; box-shadow: inset 0 0 0 1px var(--rule-strong); caret-color: var(--accent); transition: box-shadow 0.2s var(--out); }
+input::placeholder { color: var(--ink-3); font-family: var(--body); font-weight: 400; opacity: 1; }
+input[type=text]:hover, input[type=password]:hover { box-shadow: inset 0 0 0 1px var(--ink-3); }
+input[type=text]:focus, input[type=password]:focus { outline: 0; box-shadow: inset 0 0 0 2px var(--accent); }
+.go { display: flex; align-items: center; gap: 1rem 1.25rem; flex-wrap: wrap; }
+.go .fine { flex: 1 1 16rem; }
+.privacy { max-width: 40rem; padding-top: 0.25rem; }
+
+/* result */
+.done-grid { display: grid; gap: 2.5rem; margin-top: 2.5rem; align-items: start; }
+.md { display: grid; gap: 0.75rem; }
+.md label { font-size: 0.875rem; color: var(--ink-2); font-weight: 600; }
+.md textarea { width: 100%; resize: none; min-height: 9rem; field-sizing: content; padding: 0.875rem 1rem; font: 500 0.8125rem/1.6 var(--mono); color: var(--ink); background: var(--field); border: 0; border-radius: 12px; box-shadow: inset 0 0 0 1px var(--rule-strong); caret-color: var(--accent); overflow-wrap: anywhere; }
+.md textarea:focus { outline: 0; box-shadow: inset 0 0 0 2px var(--accent); }
+.after { display: grid; gap: 1.25rem; margin-top: 3rem; padding-top: 2rem; border-top: 1px solid var(--rule); max-width: 44rem; }
+.after h2 { font-size: 1.125rem; }
+.after section { display: grid; gap: 0.4rem; }
+
+/* error */
+.err { position: relative; max-width: 34rem; padding-block: clamp(1rem, 6vw, 4rem); }
+.err .lede { max-width: 40ch; }
+.err .btn { margin-top: 2rem; }
+.err-rec { position: absolute; z-index: -1; right: -14rem; top: -2rem; width: 26rem; opacity: 0.08; pointer-events: none; }
+.err-rec svg { display: block; width: 100%; height: auto; }
+
+.foot { width: calc(100% - 2 * var(--gutter)); max-width: calc(70rem - 2 * var(--gutter)); margin-inline: auto; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.5rem 2rem; padding-block: 1.5rem 2rem; border-top: 1px solid var(--rule); font-size: 0.875rem; color: var(--ink-3); }
+.foot p { max-width: 52ch; }
+.foot a { color: var(--ink-2); }
+.foot a:hover { color: var(--accent); }
+
+@media (min-width: 60rem) {
+  .hero { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 3.5rem; }
+  .step { grid-template-columns: 15rem minmax(0, 1fr); gap: 3rem; }
+  .done-grid { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 3rem; }
+  .err-rec { left: calc(100% + 2rem); right: auto; top: -3rem; width: 30rem; opacity: 0.1; }
 }
-@keyframes spin { to { transform: rotate(360deg); } }
-.wrap { position: relative; z-index: 1; max-width: 1040px; margin: 0 auto; padding: 28px 24px 40px; }
-.top { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
-.mark { font: 600 20px/1 var(--display); color: var(--ink); text-decoration: none; letter-spacing: -0.01em; }
-.mark:hover { color: var(--amber); }
-.by { font-size: 13px; color: var(--dim); }
-h1 { font: 600 clamp(40px, 7vw, 72px)/1.02 var(--display); letter-spacing: -0.03em; margin: 0; text-wrap: balance; }
-h1 em { font-style: italic; font-weight: 500; color: var(--amber); }
-h2 { font: 600 24px/1.2 var(--display); letter-spacing: -0.01em; margin: 0 0 6px; text-wrap: balance; }
-p { margin: 0; }
-.lede { color: var(--sub); font-size: 18px; max-width: 46ch; margin-top: 20px; text-wrap: pretty; }
-.hero { padding: 72px 0 40px; max-width: 640px; }
-.hero-card { display: block; width: 495px; max-width: 100%; height: auto; margin-top: 40px; border-radius: 14px; box-shadow: 0 24px 48px -12px rgba(0,0,0,0.6); }
-.steps { list-style: none; counter-reset: step; margin: 24px 0 0; padding: 0; display: grid; gap: 0; max-width: 720px; }
-.steps > li { counter-increment: step; position: relative; padding: 0 0 44px 64px; }
-.steps > li::before {
-  content: counter(step); position: absolute; left: 0; top: -2px; width: 40px; height: 40px; display: grid; place-items: center;
-  border-radius: 50%; border: 1px solid var(--line); background: var(--panel); color: var(--amber); font: 600 18px/1 var(--display);
+@media (max-width: 40rem) {
+  .sleeve .rec { display: none; }
+  .val { grid-template-columns: minmax(0, 1fr) auto; padding-block: 0.75rem 0.5rem; }
+  .val dt { grid-column: 1 / -1; }
+  .go .btn.big { width: 100%; }
 }
-.steps > li::after { content: ''; position: absolute; left: 19.5px; top: 46px; bottom: 6px; width: 1px; background: var(--line-soft); }
-.steps > li:last-child { padding-bottom: 0; }
-.steps > li:last-child::after { display: none; }
-.step-body { color: var(--sub); max-width: 58ch; }
-.step-body a { color: var(--ink); text-decoration-color: var(--amber); }
-.step-body a:hover { color: var(--amber); }
-.vals { margin: 16px 0 0; display: grid; gap: 8px; max-width: 600px; }
-.val { display: grid; grid-template-columns: 112px 1fr auto; align-items: center; gap: 12px; padding: 8px 8px 8px 14px; background: var(--panel); border: 1px solid var(--line-soft); border-radius: 10px; }
-.val dt { font-size: 13px; color: var(--dim); }
-.val dd { margin: 0; font: 14px/1.4 var(--mono); color: var(--ink); overflow-wrap: anywhere; user-select: all; }
-.val.key { border-color: #5a3f1c; background: #1f1710; }
-.val.key dd { color: #ffd9a0; }
-.val.plain dd { font-family: var(--body); user-select: auto; color: var(--sub); }
-.btn {
-  appearance: none; font: 600 14px/1 var(--body); color: var(--ink); background: var(--raise); border: 1px solid var(--line);
-  border-radius: 8px; padding: 9px 13px; cursor: pointer; min-height: 36px; white-space: nowrap;
-  transition: background-color .2s var(--ease), border-color .2s var(--ease), transform .15s var(--ease), color .2s var(--ease);
+@media (max-width: 26rem) {
+  .val { grid-template-columns: minmax(0, 1fr); }
+  .val .btn { width: 100%; }
 }
-.btn:hover { background: #2d231d; border-color: #4a3a2c; }
-.btn:active { transform: scale(0.97); }
-.btn.done { color: #0f0c0a; background: var(--amber); border-color: var(--amber); }
-.btn.primary { color: #0f0c0a; background: var(--amber); border-color: var(--amber); font-size: 16px; padding: 14px 22px; min-height: 48px; border-radius: 10px; }
-.btn.primary:hover { background: #ffb44f; border-color: #ffb44f; }
-form { margin-top: 18px; display: grid; gap: 16px; max-width: 600px; }
-label.field { display: grid; gap: 6px; font-size: 14px; color: var(--sub); }
-input[type=text], input[type=password] {
-  font: 15px/1.4 var(--mono); color: var(--ink); background: #0b0907; border: 1px solid var(--line); border-radius: 10px;
-  padding: 12px 14px; width: 100%; caret-color: var(--amber); transition: border-color .2s var(--ease), box-shadow .2s var(--ease);
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
 }
-input::placeholder { color: #6f6256; }
-input[type=text]:focus, input[type=password]:focus { outline: none; border-color: var(--amber); box-shadow: 0 0 0 3px rgba(242, 164, 58, 0.18); }
-fieldset { border: 0; margin: 4px 0 0; padding: 0; min-width: 0; }
-legend { font-size: 14px; color: var(--sub); padding: 0; margin-bottom: 8px; }
-.themes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-.theme { position: relative; display: grid; gap: 8px; padding: 8px 8px 10px; background: var(--panel); border: 1px solid var(--line-soft); border-radius: 12px; cursor: pointer; transition: border-color .2s var(--ease), background-color .2s var(--ease), transform .2s var(--ease); }
-.theme:hover { border-color: #4a3a2c; }
-.theme input { position: absolute; opacity: 0; pointer-events: none; }
-.theme img { display: block; width: 100%; height: auto; border-radius: 8px; }
-.theme span { font-size: 14px; font-weight: 600; text-align: center; color: var(--sub); }
-.theme:has(input:checked) { border-color: var(--amber); background: #211810; }
-.theme:has(input:checked) span { color: var(--amber); }
-.theme:has(input:focus-visible) { outline: 2px solid var(--amber); outline-offset: 3px; }
-.fine { font-size: 14px; color: var(--dim); max-width: 58ch; }
-.submit { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin-top: 4px; }
-.foot { margin-top: 72px; padding-top: 20px; border-top: 1px solid var(--line-soft); display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; font-size: 14px; color: var(--dim); }
-.foot a { color: var(--sub); }
-.foot a:hover { color: var(--amber); }
-.result { padding: 64px 0 0; max-width: 700px; }
-.result .preview { display: block; width: 495px; max-width: 100%; height: auto; margin: 36px 0 28px; border-radius: 14px; box-shadow: 0 24px 48px -12px rgba(0,0,0,0.6); background: var(--panel); }
-.chips { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px; }
-.chip { position: relative; cursor: pointer; }
-.chip input { position: absolute; opacity: 0; pointer-events: none; }
-.chip span { display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; border-radius: 99px; font-size: 14px; font-weight: 600; color: var(--sub); border: 1px solid var(--line); background: var(--panel); transition: border-color .2s var(--ease), color .2s var(--ease); }
-.chip i { width: 10px; height: 10px; border-radius: 50%; display: block; }
-.chip:has(input:checked) span { color: var(--amber); border-color: var(--amber); }
-.chip:has(input:focus-visible) span { outline: 2px solid var(--amber); outline-offset: 3px; }
-.code { display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: start; padding: 14px; background: #0b0907; border: 1px solid var(--line); border-radius: 12px; }
-.code textarea { width: 100%; resize: none; border: 0; background: transparent; color: #ffd9a0; font: 13px/1.6 var(--mono); padding: 0; margin: 0; caret-color: var(--amber); overflow-wrap: anywhere; }
-.code textarea:focus { outline: none; }
-.next { margin-top: 28px; color: var(--sub); max-width: 58ch; display: grid; gap: 12px; }
-.next p:last-child { color: var(--dim); font-size: 14px; }
-.err { padding-top: 96px; max-width: 560px; }
-.err .lede { margin-bottom: 28px; }
-@media (max-width: 720px) {
-  .disc { width: 300px; right: -190px; top: 150px; opacity: 0.35; }
-  .hero { padding: 48px 0 24px; }
-  .steps > li { padding-left: 52px; }
-  .steps > li::before { width: 34px; height: 34px; font-size: 16px; }
-  .steps > li::after { left: 16.5px; top: 40px; }
-  .val { grid-template-columns: 1fr auto; }
-  .val dt { grid-column: 1 / -1; margin-bottom: -6px; }
-  .themes { grid-template-columns: 1fr; }
-  .code { grid-template-columns: 1fr; }
-  .result { padding-top: 40px; }
-}
-@media (prefers-reduced-motion: reduce) { .disc { animation: none; } .btn, .theme, input { transition: none; } }
-@media (max-width: 720px) { .theme { grid-template-columns: 1fr; } }
-.rise { animation: rise .8s var(--ease) both; }
-@keyframes rise { from { opacity: 0; transform: translateY(14px); } }
-@media (prefers-reduced-motion: reduce) { .rise { animation: none; } }
 `;
 
 const COPY_JS = `
+const live = document.getElementById("live");
 document.addEventListener("click", async (e) => {
   const b = e.target.closest("[data-copy]");
   if (!b) return;
@@ -422,9 +445,18 @@ document.addEventListener("click", async (e) => {
   try { await navigator.clipboard.writeText(text); }
   catch { const t = document.createElement("textarea"); t.value = text; document.body.append(t); t.select(); document.execCommand("copy"); t.remove(); }
   const was = b.textContent; b.textContent = "Copied"; b.classList.add("done");
-  setTimeout(() => { b.textContent = was; b.classList.remove("done"); }, 1600);
+  if (live) live.textContent = "Copied to clipboard";
+  setTimeout(() => { b.textContent = was; b.classList.remove("done"); if (live) live.textContent = ""; }, 1600);
 });
 `;
+
+// A record drawn once and reused: header mark, hero sleeve, error page.
+const RECORD_SVG = (grooves = true) =>
+  `<svg viewBox="0 0 200 200" aria-hidden="true" focusable="false"><circle cx="100" cy="100" r="99" fill="var(--ink)"/>${
+    grooves
+      ? [90, 82, 74, 66, 58, 50].map((r) => `<circle cx="100" cy="100" r="${r}" fill="none" stroke="oklch(1 0 0 / 0.1)" stroke-width="1"/>`).join("")
+      : ""
+  }<path d="M100 100 L100 1 A99 99 0 0 1 169 29 Z" fill="oklch(1 0 0 / 0.1)"/><path d="M100 100 L100 199 A99 99 0 0 1 31 171 Z" fill="oklch(1 0 0 / 0.1)"/><circle cx="100" cy="100" r="32" fill="var(--accent)"/><circle cx="100" cy="100" r="4" fill="var(--paper)"/></svg>`;
 
 function layout(title, body, script = "") {
   return `<!doctype html>
@@ -433,78 +465,101 @@ function layout(title, body, script = "") {
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="referrer" content="no-referrer">
-<meta name="theme-color" content="#0f0c0a">
+<meta name="theme-color" content="#f6f1e7">
 <meta name="description" content="A vinyl card for your GitHub README that shows what you are playing on Spotify.">
 <title>${esc(title)}</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500..700;1,9..144,500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
 <style>${PAGE_CSS}</style>
 </head>
 <body>
-<div class="disc" aria-hidden="true"></div>
-<div class="wrap">
-<header class="top"><a class="mark" href="/">spinreadme</a><span class="by">Made by <a href="https://baselashraf.com" target="_blank" rel="noopener">Basel Ashraf</a></span></header>
+<a class="skip" href="#main">Skip to content</a>
+<header class="bar">
+  <a class="brand" href="/">${RECORD_SVG(false)}<span>spinreadme</span></a>
+  <nav aria-label="Project"><a href="${REPO_URL}" target="_blank" rel="noopener">GitHub</a></nav>
+</header>
+<main id="main">
 ${body}
-<footer class="foot"><span>Nothing is stored on a server.</span><a href="https://github.com/BaselAshraf81/spinreadme" target="_blank" rel="noopener">Source on GitHub</a></footer>
-</div>
+</main>
+<footer class="foot">
+  <p>Made by <a href="https://baselashraf.com" target="_blank" rel="noopener">Basel Ashraf</a>. Not affiliated with Spotify.</p>
+  <a href="${REPO_URL}" target="_blank" rel="noopener">Source on GitHub</a>
+</footer>
+<div id="live" class="sr" role="status" aria-live="polite"></div>
 <script>${COPY_JS}${script}</script>
 </body>
 </html>`;
 }
 
-const copyBtn = (v, label = "Copy") => `<button type="button" class="btn" data-copy="${esc(v)}" aria-label="${esc(label)} ${esc(v)}">Copy</button>`;
+const copyBtn = (v, name) => `<button type="button" class="btn" data-copy="${esc(v)}" aria-label="Copy ${esc(name)}">Copy</button>`;
+// Break only at slashes, never inside a word, so long URLs stay readable.
+const breakable = (s) => esc(s).replace(/(:\/\/|\/)/g, "$1<wbr>");
 const val = (name, v, cls = "") =>
-  `<div class="val ${cls}"><dt>${name}</dt><dd>${esc(v)}</dd>${copyBtn(v)}</div>`;
+  `<div class="val ${cls}"><dt>${esc(name)}</dt><dd>${breakable(v)}</dd>${copyBtn(v, name)}</div>`;
+
+const themeSwatch = (n) =>
+  `<i class="dot" style="background:linear-gradient(135deg,${THEMES[n].bgFrom} 50%,${THEMES[n].accent} 50%)"></i>`;
 
 function setupPage(origin) {
   const redirect = `${origin}/callback`;
-  const themes = THEME_NAMES.map(
+  const previews = THEME_NAMES.map(
+    (n) => `<img class="pv pv-${n}" src="${sampleCard(n)}" alt="Sample ${THEME_LABELS[n] || n} card: Midnight City by M83" width="495" height="170">`
+  ).join("");
+  const opts = THEME_NAMES.map(
     (n, i) =>
-      `<label class="theme"><input type="radio" name="theme" value="${n}"${i === 0 ? " checked" : ""}><img src="${sampleCard(n)}" alt="" width="495" height="170"><span>${THEME_LABELS[n] || n}</span></label>`
+      `<label class="opt"><input type="radio" name="theme" form="setup" value="${n}"${i === 0 ? " checked" : ""}><span>${themeSwatch(n)}${THEME_LABELS[n] || n}</span></label>`
   ).join("");
   return layout(
     "spinreadme: a now playing card for your GitHub README",
-    `<section class="hero rise">
-  <h1>Your music, <em>spinning</em> on your profile.</h1>
-  <p class="lede">Put a vinyl card in your GitHub README. The record turns while a track plays, and the card shows your last track when you stop.</p>
-  <img class="hero-card" src="${sampleCard("vinyl")}" alt="spinreadme card showing Midnight City by M83 on a spinning record" width="495" height="170">
+    `<section class="hero" aria-labelledby="top">
+  <div>
+    <h1 id="top">Show what you are playing on your GitHub profile.</h1>
+    <p class="lede">A vinyl card for your README. The record spins while a Spotify track plays and shows your last track when it stops.</p>
+  </div>
+  <div class="stage">
+    <div class="sleeve">
+      <div class="rec">${RECORD_SVG()}</div>
+      ${previews}
+    </div>
+    <fieldset class="picker">
+      <legend>Theme</legend>
+      <div class="opts">${opts}</div>
+    </fieldset>
+  </div>
 </section>
 <ol class="steps">
-  <li>
-    <h2>Create a Spotify app</h2>
+  <li class="step">
+    <div class="step-head"><span class="n" aria-hidden="true">1</span><h2>Create a Spotify app</h2></div>
     <div class="step-body">
-      <p>Open the <a href="https://developer.spotify.com/dashboard" target="_blank" rel="noopener">Spotify developer dashboard</a>, click Create app, and fill it in with these values. Under "Which API/SDKs are you planning to use?" tick Web API.</p>
+      <p class="text">The card reads your playback through a Spotify app that you own. Open the <a href="https://developer.spotify.com/dashboard" target="_blank" rel="noopener">Spotify developer dashboard</a>, choose Create app, and enter these values. Under APIs used, tick Web API.</p>
       <dl class="vals">
         ${val("App name", "spinreadme")}
         ${val("App description", "Now playing card for my GitHub README")}
         ${val("Redirect URI", redirect, "key")}
       </dl>
-      <p class="fine" style="margin-top:12px">Add the redirect URI with the Add button, then save. It has to match exactly, with no trailing slash.</p>
+      <p class="fine">Add the redirect URI with the Add button, then save the app. It has to match exactly, with no trailing slash.</p>
     </div>
   </li>
-  <li>
-    <h2>Paste your credentials</h2>
+  <li class="step">
+    <div class="step-head"><span class="n" aria-hidden="true">2</span><h2>Paste the credentials</h2></div>
     <div class="step-body">
-      <p>Open the app, then Settings. Copy the Client ID, then click View client secret and copy that too.</p>
-      <form method="post" action="/connect" autocomplete="off">
-        <label class="field">Client ID<input type="text" name="client_id" required spellcheck="false" autocapitalize="off" autocomplete="off" placeholder="32 characters" pattern="[A-Za-z0-9]{8,128}"></label>
-        <label class="field">Client secret<input type="password" name="client_secret" required spellcheck="false" autocapitalize="off" autocomplete="off" placeholder="32 characters" pattern="[A-Za-z0-9]{8,128}"></label>
-        <fieldset>
-          <legend>Card theme</legend>
-          <div class="themes">${themes}</div>
-        </fieldset>
-        <div class="submit">
-          <button type="submit" class="btn primary">Connect Spotify</button>
-          <p class="fine">Spotify will ask you to approve read-only access to what you are playing.</p>
+      <p class="text">In your new app, open Settings. Copy the Client ID, then choose View client secret and copy that too.</p>
+      <form id="setup" method="post" action="/connect" autocomplete="off">
+        <label class="field">Client ID<input type="text" name="client_id" required spellcheck="false" autocapitalize="off" autocomplete="off" placeholder="Paste the Client ID" pattern="[A-Za-z0-9]{8,128}" title="Letters and numbers only"></label>
+        <label class="field">Client secret<input type="password" name="client_secret" required spellcheck="false" autocapitalize="off" autocomplete="off" placeholder="Paste the client secret" pattern="[A-Za-z0-9]{8,128}" title="Letters and numbers only"></label>
+        <div class="go">
+          <button type="submit" class="btn big">Connect Spotify</button>
+          <p class="fine">Spotify will ask you to allow read access to your currently playing and recently played tracks. Nothing else is requested.</p>
         </div>
       </form>
+      <p class="fine privacy">Your client ID, client secret and refresh token are encrypted (AES-256-GCM) into your card URL. spinreadme has no database. It does cache Spotify access tokens for about 50 minutes, so each view of your card does not call Spotify again.</p>
     </div>
   </li>
-  <li>
-    <h2>Paste the Markdown</h2>
+  <li class="step">
+    <div class="step-head"><span class="n" aria-hidden="true">3</span><h2>Add it to your README</h2></div>
     <div class="step-body">
-      <p>You get a card URL and a line of Markdown. Put it in the README of your profile repository, the one named after your username. The app is yours, so Spotify's 25-user limit does not apply.</p>
+      <p class="text">After you approve access, you get one line of Markdown. Paste it into the README of your profile repository, the one named after your GitHub username, and commit.</p>
     </div>
   </li>
 </ol>`
@@ -514,9 +569,9 @@ function setupPage(origin) {
 function resultPage(origin, blob, theme) {
   const cardUrl = (t) => `${origin}/c/${blob}.svg?theme=${t}`;
   const md = (t) => `![Spotify now playing](${cardUrl(t)})`;
-  const chips = THEME_NAMES.map(
+  const opts = THEME_NAMES.map(
     (n) =>
-      `<label class="chip"><input type="radio" name="theme" value="${n}"${n === theme ? " checked" : ""}><span><i style="background:${THEMES[n].accent};box-shadow:0 0 0 2px ${THEMES[n].bgTo}"></i>${THEME_LABELS[n] || n}</span></label>`
+      `<label class="opt"><input type="radio" name="theme" value="${n}"${n === theme ? " checked" : ""}><span>${themeSwatch(n)}${THEME_LABELS[n] || n}</span></label>`
   ).join("");
   const script = `
 const base = ${JSON.stringify(`${origin}/c/${blob}.svg?theme=`)};
@@ -526,20 +581,36 @@ document.querySelectorAll('input[name=theme]').forEach((r) => r.addEventListener
 }));`;
   return layout(
     "spinreadme: your card is ready",
-    `<section class="result rise">
-  <h1>Your card is <em>ready</em>.</h1>
-  <img id="pv" class="preview" src="${esc(cardUrl(theme))}" alt="Your now playing card" width="495" height="170">
-  <div class="chips" role="radiogroup" aria-label="Theme">${chips}</div>
-  <div class="code">
-    <textarea id="md" rows="3" readonly aria-label="Markdown for your README" spellcheck="false">${esc(md(theme))}</textarea>
-    <button type="button" class="btn primary" data-copy="#md">Copy Markdown</button>
+    `<h1>Your card is ready.</h1>
+<p class="lede">Pick a theme, copy the Markdown and paste it into your profile README.</p>
+<div class="done-grid">
+  <div class="stage">
+    <div class="sleeve">
+      <div class="rec">${RECORD_SVG()}</div>
+      <img id="pv" class="pv" style="display:block" src="${esc(cardUrl(theme))}" alt="Your now playing card" width="495" height="170">
+    </div>
+    <fieldset class="picker">
+      <legend>Theme</legend>
+      <div class="opts">${opts}</div>
+    </fieldset>
   </div>
-  <div class="next">
-    <p>Paste it into the README of your profile repository and commit. GitHub can take a minute to refresh the image.</p>
-    <p>The URL holds your encrypted credentials, so anyone who has it can see what you play. Keep it out of places you would not share. To shut it off, reset the client secret in your Spotify app.</p>
-    <p><a href="/">Make another card</a></p>
+  <div class="md">
+    <label for="md">Markdown for your README</label>
+    <textarea id="md" rows="5" readonly spellcheck="false">${esc(md(theme))}</textarea>
+    <button type="button" class="btn big" data-copy="#md">Copy Markdown</button>
   </div>
-</section>`,
+</div>
+<div class="after">
+  <section>
+    <h2>Where it goes</h2>
+    <p class="text">Add the line to the README of your profile repository, the one named after your GitHub username, and commit. GitHub can take a minute or so to refresh the image.</p>
+  </section>
+  <section>
+    <h2>Keep the URL to yourself</h2>
+    <p class="text">The URL contains your Spotify credentials in encrypted form. Anyone who has it can see what you are playing. To switch the card off, delete the app in your Spotify developer dashboard.</p>
+  </section>
+  <p class="text"><a href="/">Make another card</a></p>
+</div>`,
     script
   );
 }
@@ -547,7 +618,12 @@ document.querySelectorAll('input[name=theme]').forEach((r) => r.addEventListener
 function errorPage(message) {
   return layout(
     "spinreadme: something went wrong",
-    `<section class="err rise"><h1>That did not <em>work</em>.</h1><p class="lede">${esc(message)}</p><a class="btn primary" style="display:inline-flex;align-items:center;text-decoration:none" href="/">Back to setup</a></section>`
+    `<section class="err">
+  <div class="err-rec" aria-hidden="true">${RECORD_SVG()}</div>
+  <h1>That did not work.</h1>
+  <p class="lede">${esc(message)}</p>
+  <a class="btn big" href="/">Back to setup</a>
+</section>`
   );
 }
 const esc = (s) =>
