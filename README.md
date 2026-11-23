@@ -1,74 +1,42 @@
-# spinreadme
+﻿# spinreadme
 
-A "now playing" card for your GitHub profile README, fed by the Spotify API.
+A Spotify "now playing" card for your GitHub profile README.
 
-![now playing](assets/paper-playing.svg)
+[![now playing](assets/paper-playing.svg)](https://spinreadme.baselashraf.com)
 
-While a track plays the bars bounce and the tick progress bar fills in real time. When nothing is playing it shows your last played track. Themes: `paper`, `ink`, `signal`, chosen with `?theme=`.
+Free and hosted. Connect Spotify once, then copy one image link into your README. The bars move while a track plays, and the card shows your last played track when nothing is playing.
 
-![ink](assets/ink-playing.svg)
-![signal](assets/signal-last.svg)
+**[Get yours](https://spinreadme.baselashraf.com)**
 
-It runs as a single Cloudflare Worker with no dependencies. The Worker asks Spotify what you are listening to, embeds the album cover in an SVG and returns it. GitHub only displays images, so the cover has to be inlined; that is why this is rendered server side.
+## Themes
 
-## Setup
+Pick one on the setup page, or add `?theme=paper`, `?theme=ink` or `?theme=signal` to the card URL.
 
-You need a Spotify account, a Cloudflare account (the free plan is enough) and Node 18 or newer.
+| paper | ink | signal |
+| --- | --- | --- |
+| ![paper](assets/paper-playing.svg) | ![ink](assets/ink-playing.svg) | ![signal](assets/signal-playing.svg) |
 
-1. Create an app at https://developer.spotify.com/dashboard. Add `http://127.0.0.1:8888/callback` as a redirect URI.
-2. Get a refresh token:
+## Self-host
 
+The Worker is one file with no dependencies. You need a Cloudflare account and Node 18 or newer.
+
+1. In `wrangler.toml`, replace the `routes` line with your own route, or delete it to use a `workers.dev` URL.
+2. Generate the encryption key. It seals the OAuth state and the per-user links:
    ```
-   npm install
-   SPOTIFY_CLIENT_ID=xxx SPOTIFY_CLIENT_SECRET=yyy npm run token
+   node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
+   npx wrangler secret put SPINDLE_KEY
    ```
+3. Deploy with `npm install` then `npm run deploy`.
+4. Open `/` on your Worker. It is the setup page: each user enters the client ID and secret of their own Spotify app, approves access, and gets a link like `/c/<token>.svg?theme=ink`.
 
-   On PowerShell, set the variables with `$env:SPOTIFY_CLIENT_ID="xxx"` first. Approve the access request in the browser and copy the token printed in the terminal.
-3. Store the secrets in the Worker:
+Spotify limits an app in development mode to 25 users, which is why each person brings their own app.
 
-   ```
-   npx wrangler secret put SPOTIFY_CLIENT_ID
-   npx wrangler secret put SPOTIFY_CLIENT_SECRET
-   npx wrangler secret put SPOTIFY_REFRESH_TOKEN
-   ```
-4. Deploy:
+To serve a single account without the setup page, set `SPOTIFY_CLIENT_ID`, `SPOTIFY_CLIENT_SECRET` and `SPOTIFY_REFRESH_TOKEN` as secrets (`npm run token` prints a refresh token) and use `/card.svg`.
 
-   ```
-   npm run deploy
-   ```
-
-   Wrangler prints the URL of your Worker, for example `https://spinreadme.your-name.workers.dev`.
-5. Add it to your profile README:
-
-   ```markdown
-   ![now playing](https://spinreadme.your-name.workers.dev/card.svg)
-   ```
-
-   To link the card to your Spotify profile, wrap it:
-
-   ```markdown
-   [![now playing](https://spinreadme.your-name.workers.dev/card.svg)](https://open.spotify.com/user/your-id)
-   ```
-
-## Local development
-
-`npm run dev` serves the card at http://localhost:8787 using secrets from a `.dev.vars` file:
-
-```
-SPOTIFY_CLIENT_ID=...
-SPOTIFY_CLIENT_SECRET=...
-SPOTIFY_REFRESH_TOKEN=...
-```
-
-`npm run preview` regenerates the sample cards in `assets/` without calling Spotify.
-
-## Notes
-
-- The card needs the scopes `user-read-currently-playing` and `user-read-recently-played`. Nothing else is requested.
-- GitHub proxies images through its own cache, so the card can lag by a minute or so when you load the profile. The progress bar animates on its own between loads.
-- Podcasts and ads are not shown as tracks. In those cases the card falls back to your last played track.
-- Colors, sizes and layout are all in `render()` in `src/worker.js`.
+To run locally, put the same variables plus `SPINDLE_KEY` in `.dev.vars` and run `npx wrangler dev`. `npm run preview` regenerates the images in `assets/`.
 
 ## License
 
 MIT
+
+Made by [Basel Ashraf](https://baselashraf.com)
