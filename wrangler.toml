@@ -1,3 +1,4 @@
 name = "spinreadme"
 main = "src/worker.js"
 compatibility_date = "2025-01-01"
+routes = [{ pattern = "spinreadme.baselashraf.com", custom_domain = true }]
