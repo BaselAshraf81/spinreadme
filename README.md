@@ -1,4 +1,4 @@
-﻿# needle-drop
+# spindle
 
 A vinyl-style "now playing" card for your GitHub profile README, fed by the Spotify API.
 
@@ -36,17 +36,17 @@ You need a Spotify account, a Cloudflare account (the free plan is enough) and N
    npm run deploy
    ```
 
-   Wrangler prints the URL of your Worker, for example `https://needle-drop.your-name.workers.dev`.
+   Wrangler prints the URL of your Worker, for example `https://spindle.your-name.workers.dev`.
 5. Add it to your profile README:
 
    ```markdown
-   ![now playing](https://needle-drop.your-name.workers.dev/card.svg)
+   ![now playing](https://spindle.your-name.workers.dev/card.svg)
    ```
 
    To link the card to your Spotify profile, wrap it:
 
    ```markdown
-   [![now playing](https://needle-drop.your-name.workers.dev/card.svg)](https://open.spotify.com/user/your-id)
+   [![now playing](https://spindle.your-name.workers.dev/card.svg)](https://open.spotify.com/user/your-id)
    ```
 
 ## Local development

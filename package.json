@@ -1,5 +1,5 @@
-﻿{
-  "name": "needle-drop",
+{
+  "name": "spindle",
   "version": "1.0.0",
   "description": "A vinyl-style Spotify now-playing card for your GitHub profile README",
   "private": true,
