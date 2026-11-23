@@ -1,0 +1,45 @@
+﻿{
+    "version":  "v1",
+    "hooks":  [
+                  {
+                      "name":  "Trail: refresh map at session start",
+                      "description":  "Runs trail build and prints a short status.",
+                      "trigger":  "SessionStart",
+                      "action":  {
+                                     "command":  "powershell -NoProfile -ExecutionPolicy Bypass -File .kiro/hooks/scripts/trail-session-start.ps1",
+                                     "type":  "command"
+                                 },
+                      "timeout":  60
+                  },
+                  {
+                      "name":  "Trail: rebuild map after agent turn",
+                      "description":  "Silent trail build so the map matches the edits.",
+                      "trigger":  "Stop",
+                      "action":  {
+                                     "command":  "powershell -NoProfile -ExecutionPolicy Bypass -File .kiro/hooks/scripts/trail-stop-build.ps1",
+                                     "type":  "command"
+                                 },
+                      "timeout":  60
+                  },
+                  {
+                      "name":  "Trail: prompt reminder",
+                      "description":  "Tiny reminder appended to every prompt.",
+                      "trigger":  "UserPromptSubmit",
+                      "action":  {
+                                     "prompt":  "Trail: use trail ask \"\u003cq\u003e\" --source, trail callers, trail skeleton, trail grep before grepping or opening files. Save decisions with trail note. In PowerShell run it directly: trail ask \"question\" --source 2>$null (never cmd /c with backslash-escaped quotes).",
+                                     "type":  "agent"
+                                 }
+                  },
+                  {
+                      "name":  "Trail: re-orient after compaction",
+                      "description":  "Reminds the model to rebuild context from the map.",
+                      "trigger":  "PostCompact",
+                      "action":  {
+                                     "command":  "powershell -NoProfile -ExecutionPolicy Bypass -File .kiro/hooks/scripts/trail-post-compact.ps1",
+                                     "type":  "command"
+                                 },
+                      "timeout":  10
+                  }
+              ]
+}
+

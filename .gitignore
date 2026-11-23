@@ -2,3 +2,6 @@
 .wrangler/
 .dev.vars
 .env
+
+# graft's local graph cache — regenerable, not committed (run `graft build`).
+/.trail/cache/
